@@ -1,0 +1,22 @@
+mixin items_suggestion_modal(id)
+    div.modal.fade(id="#{id}", tabindex="-1", role="dialog", aria-hidden="true", style="min-width: 100%; min-height: 100%;")
+        div.modal-dialog(style="width: 100%; height: 100%; margin: 0;"))
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('items_suggestion_modal.title')
+                    h5= _.i18n('items_suggestion_modal.title.hint')
+                div.modal-body
+                    table.table.selectable.table-bordered.table-striped(role='grid', id="#{id}__items_table")
+                        thead
+                            tr
+                                th= _.i18n('items.table.article_number')
+                                th= _.i18n('items.table.name')
+                                th= _.i18n('items.table.price_netto')
+                                th= _.i18n('items.table.reference_oe')
+                                th= _.i18n('items.table.reference_oem')
+                                th= _.i18n('items.table.reference_other')
+
+                    form(id="#{id}__items_form")
+                div.modal-footer
+                    button.btn.btn-default(type="button", onclick="ItemsSuggestionModal.hide('#{id}'); return false;")= _.i18n('items_suggestion_modal.button.close')

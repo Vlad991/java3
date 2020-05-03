@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/AutheticationService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/BankAuthenticationService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/BankFrontend" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/BankWebProject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/BankWebProjectSpringBoot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/ConnectionPool" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CreditCardServer" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Criteria_Hibernate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/EntityManager_Hibernate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/FilmStockMainUserManagementService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/FirstServletApp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/HQL_Hibernate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Hibernate_Cashe" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/MyWebChatProject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Reflection" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Sarafan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Session_DAO_Hibernate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Session_Hibernate1" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SpringCoreJavaBased" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SpringCoreXMLBased" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SpringTutorials" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Students_hb" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Sweater" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TemplateDAO" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TestProject1" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/TransactionManager" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/authservice" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/newwebchat" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/webchatfrontend" vcs="Git" />
+  </component>
+</project>

@@ -1,0 +1,28 @@
+Sehr geehrte Damen und Herren!
+
+Danke f\u00fcr Ihre Bestellung bei Reindeer.
+
+Ihre Bestellung wird im Moment bearbeitet und wird an Sie voraussichtlich am {{expected_date}} versandt. Wenn Sie mit diesem Liefertermin nicht einverstanden sind, bitte um die R\u00fcckmeldung. Ihre Bestellung wird dann storniert.
+
+Mit freundlichen Gr\u00fc\u00dfen,
+Reindeer Team
+
+
+Dear Ladies and Gentlemen!
+
+Thank you for your order at Reindeer.
+
+Your order is being processed and will be sent on {{expected_date}}.
+If you do not agree with this date, please let us know. We will cancel your order and pay your money back.
+
+Best wishes,
+Reindeer Team
+
+Reindeer Ersatzteile Handels GmbH
+Motzener Str. 5
+12277 Berlin
+PHONE +49-30-97-99-85-90
+PHONE +49-30-72-01-30-36
+FAX   +49-30-78-89-74-90
+MOBIL +49-176-96-98-79-98
+EMAIL reindeerberlin@gmail.com

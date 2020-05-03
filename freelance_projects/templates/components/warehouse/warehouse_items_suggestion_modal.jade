@@ -1,0 +1,23 @@
+mixin warehouse_items_suggestion_modal(id)
+    div.modal.fade(id="#{id}", tabindex="-1", role="dialog", aria-hidden="true", style="min-width: 100%; min-height: 100%;")
+        div.modal-dialog(style="width: 60%; height: 100%;"))
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('warehouse_items_suggestion_modal.title')
+                    h5= _.i18n('warehouse_items_suggestion_modal.title.hint')
+                div.modal-body
+                    table.table.selectable.table-bordered.table-striped(role='grid', id="#{id}__items_table")
+                        thead
+                            tr
+                                th= _.i18n('warehouse.table.article_number')
+                                th= _.i18n('warehouse.table.supplier_name')
+                                th= _.i18n('warehouse.table.supplier_price')
+                                th= _.i18n('warehouse.table.supplier_price_date')
+                                th= _.i18n('warehouse.table.warehouse_amount')
+                                th= _.i18n('warehouse.table.supplier_amount')
+                                th= _.i18n('warehouse.table.warehouse_rack')
+
+                    form(id="#{id}__items_form")
+                div.modal-footer
+                    button.btn.btn-default(type="button", onclick="WarehouseItemsSuggestionModal.hide('#{id}'); return false;")= _.i18n('warehouse_items_suggestion_modal.button.close')

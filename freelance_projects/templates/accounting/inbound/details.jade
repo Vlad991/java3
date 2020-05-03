@@ -1,0 +1,197 @@
+extends ../../layout_logged_in
+
+block content_logged_id
+    include ../../components/modal
+    //- Content Header (Page header)
+    section.content-header
+        if(isEdit)
+            h1= _.i18n('invoices.inbound.invoice.edit.title')
+        else
+            h1= _.i18n('invoices.inbound.invoice.new.title')
+
+        div.controls
+            if(!isEdit)
+                select#upload-supplier.form-control(value=invoice.supplier, name="upload-supplier")
+                    each supplier in suppliers
+                        - isSelected = supplier == invoice.supplier ? 'selected' : undefined
+                        option(value=supplier, selected=isSelected)= supplier
+                button#importInboundInvoiceBtn.btn.btn-success(onclick="$('#importInboundInvoiceFile').click(); return false;")
+                    span#importInboundInvoiceBtnSpinner.fa.fa-spinner.fa-spin.hide
+                    span#importInboundInvoiceBtnError.fa.fa-exclamation-triangle.text-red.hide
+                    = _.i18n('invoices.inbound.invoice.new.upload')
+                button.btn.btn-primary(onclick="submitCreateInboundInvoice();")= _.i18n('invoices.inbound.invoice.save')
+            else
+                button.btn.btn-primary(onclick="submitUpdateInboundInvoice();")= _.i18n('invoices.inbound.invoice.save')
+                button.btn.btn-danger(onclick="showInboundInvoiceDeleteModal();")= _.i18n('invoices.inbound.invoice.delete')
+            a.btn.btn-info(href="/accounting/inbound")= _.i18n("invoices.inbound.invoice.cancel")
+
+    //- Main content
+    section.content
+        - items = invoice.items;
+        form#invoiceForm(role="form", method="post")
+            input#inputCsrfToken(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            if (isEdit)
+                input#invoiceId(type="hidden", name="id", value=invoice.id)
+            div.row
+                div.col-md-12: div.box.box-primary
+                    div.box-header
+                        h3.box-title= _.i18n('invoices.inbound.invoice.info')
+                        h4
+                            if (invoice.uploadedToWarehouse)
+                                span.label.label-success= _.i18n('invoices.inbound.invoice.uploaded_to_warehouse')
+                            else
+                                span.label.label-warning= _.i18n('invoices.inbound.invoice.not_uploaded_to_warehouse')
+                    div.box-body
+                        div.row
+                            div.col-md-6
+                                div.row
+                                    div.col-md-9: div.form-group
+                                        label(for='invoiceNumber')= _.i18n('invoices.inbound.invoice.number')
+                                        input#invoiceNumber.form-control(name="invoiceNumber", value=invoice.invoiceNumber)
+                                    div.col-md-3: div.form-group.top-margin
+                                        input#service-supplier-checkbox.form-control(type="checkbox", name="serviceSupplier", checked=invoice.serviceSupplier ? "checked" : undefined)
+                                        label
+                                            span(style="margin-left: 15px;")= _.i18n('invoices.inbound.invoice.service_supplier')
+
+                                div.row
+                                    div.col-md-4: div.form-group
+                                        label(for='totalAmount')= _.i18n('invoices.inbound.invoice.total_amount')
+                                        input#totalAmount.form-control(name="totalAmount", value= invoice.totalAmount)
+                                    div.col-md-4: div.form-group
+                                        label(for='currency')= _.i18n('invoices.inbound.invoice.currency')
+                                        select#currency.form-control(value=invoice.currency, name="currency")
+                                            - invoiceCurrency = invoice.currency
+                                            each currency in currencies
+                                                - isSelected = currency == invoiceCurrency ? 'selected' : undefined
+                                                option(value=currency, selected=isSelected)= currency
+                                    div.col-md-4: div.form-group
+                                        label(for='payTill')= _.i18n('invoices.inbound.invoice.pay_till')
+                                        div.input-group
+                                            div.input-group-addon
+                                                i.fa.fa-clock-o
+                                            input#payTill.form-control.datepicker(name='payTill', value=_.fmt.date(invoice.payTill), data-date-format="DD.MM.YYYY", type='text')
+                            div.col-md-3
+                                div.form-group
+                                    label(for='invoiceDate')= _.i18n('invoices.inbound.invoice.date')
+                                    div.input-group
+                                        div.input-group-addon
+                                            i.fa.fa-clock-o
+                                        input#invoiceDate.form-control.datepicker(name='invoiceDate', value=_.fmt.date(invoice.invoiceDate), data-date-format="DD.MM.YYYY", type='text')
+                                div.form-group
+                                    label(for='paidOn')= _.i18n('invoices.inbound.invoice.paid_on')
+                                    div.input-group
+                                        div.input-group-addon
+                                            i.fa.fa-clock-o
+                                        input#paidOn.form-control.datepicker(name='paidOn', value=_.fmt.date(invoice.paidOn), data-date-format="DD.MM.YYYY", type='text')
+                            div.col-md-3
+                                div.form-group
+                                    label(for='source')= _.i18n('invoices.inbound.invoice.source')
+                                    select#source.form-control(value=invoice.source, name="source")
+                                        each source in sources
+                                            - isSelected = source == invoice.source ? 'selected' : undefined
+                                            option(value=source, selected=isSelected)= _.i18n('invoices.inbound.invoice.source.' + source)
+                                div.form-group
+                                    label(for='supplier')= _.i18n('invoices.inbound.invoice.supplier')
+                                    input#supplier.form-control(value=invoice.supplier, name="supplier")
+
+            div.row
+                div.col-md-12: div.box.box-primary
+                    div.box-header
+                        h3.box-title= _.i18n('invoices.inbound.invoice.comments')
+                    div.box-body
+                        div.form-group
+                            textarea#invoiceComment.form-control(name="comment", rows=5)=invoice.comment
+
+            div#inboundInvoiceItems.row: div.col-md-12: div.box.box-primary
+                div.box-header
+                    h3.box-title= _.i18n('invoices.inbound.items')
+                    div.controls
+                        button.btn.btn-default(onclick="addNewItemsLine(); return false;")= _.i18n('items.table.action.add')
+                div.box-body
+                    div.table-responsive
+                        table#itemsTable.table.table-bordered.table-striped(role='grid')
+                            thead
+                                tr
+                                    th= _.i18n('invoices.inbound.items.article_number')
+                                    th= _.i18n('invoices.inbound.items.description')
+                                    th= _.i18n('invoices.inbound.items.table.amount')
+                                    th= _.i18n('invoices.inbound.items.table.quantity')
+                                    th= _.i18n('invoices.inbound.items.table.total_amount')
+                                    th
+                            tbody
+                                if (items)
+                                    for item in items
+                                        tr
+                                            td
+                                                if (isEdit)
+                                                    input.form-control(type="hidden", name="id", value=item.id)
+                                                input.form-control(name="articleNumber", value=item.articleNumber)
+                                            td
+                                                input.form-control(name="description", value=item.description)
+                                            td
+                                                input.form-control(name="amount", value= item.amount)
+                                            td
+                                                input.form-control(name="quantity", value=item.quantity)
+                                            td
+                                                input.form-control(name="totalAmount", value= item.totalAmount, disabled)
+                                            td
+                                                button.deleteLineBtn.btn.btn-danger
+                                                    i.fa.fa-minus
+                                else
+                                    tr
+                                        td
+                                            input.form-control(name="articleNumber")
+                                        td
+                                            input.form-control(name="description")
+                                        td
+                                            input.form-control(name="amount")
+                                        td
+                                            input.form-control(name="quantity")
+                                        td
+                                            input.form-control(name="totalAmount", disabled)
+                                        td
+                                            button.deleteLineBtn.btn.btn-danger
+                                                i.fa.fa-minus
+
+    +modal_dialog
+
+    div#successCreateModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('invoices.inbound.info')
+                div.modal-body
+                    if (isEdit)
+                        h5= _.i18n('invoices.inbound.success.edit')
+                    else
+                        h5= _.i18n('invoices.inbound.success.create')
+                div.modal-footer
+                    a.btn.btn-info(href="/accounting/inbound")= _.i18n('invoices.inbound.success.continue')
+                    button.btn.btn-default.pull-left(type="button", data-dismiss="modal")= _.i18n('invoices.inbound.invoice.cancel')
+
+    div#successDeleteModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('invoices.inbound.info')
+                div.modal-body
+                    h5= _.i18n('invoices.inbound.modal.delete.request')
+                div.modal-footer
+                    button.btn.btn-danger(onclick="submitDeleteInboundInvoice();")= _.i18n('invoices.inbound.success.continue')
+                    button.btn.btn-default.pull-left(type="button", data-dismiss="modal")= _.i18n('invoices.inbound.invoice.cancel')
+
+    form#importInboundInvoiceForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importInboundInvoiceFile(type="file", name="importInboundInvoiceFile", onchange="uploadInboundInvoiceFile();")
+
+block page_scripts
+    script(src="/js/inbound_invoices.js", type="text/javascript")
+    script(type="text/javascript").
+        var processToWarehouseMessage = '#{_.i18n("invoices.inbound.modal.process_to_warehouse")}';
+        var successfullyUpdatedInvoice = '#{_.i18n("invoices.inbound.modal.invoice_successfully_uploaded")}';
+
+    if(invoice.serviceSupplier)
+        script(type="text/javascript").
+            $('#inboundInvoiceItems').hide();

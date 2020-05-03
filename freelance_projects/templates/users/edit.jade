@@ -1,0 +1,58 @@
+extends ../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('users.edit.title')}
+        div.controls
+            button.btn.btn-primary(onclick="$('#userEditForm').submit();")= _.i18n('users.edit.save')
+            a.btn.btn-default(href="/users")= _.i18n('users.edit.cancel')
+    //- Main content
+    section.content
+        form#userEditForm(role="form", action="/users/edit#{ if (user) '?id=' +  user.id }", method="post")
+            if (user)
+                input(type='hidden', name='userId', value='#{user.id}')
+            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-body
+                            div.form-group
+                                label(for='username')= _.i18n('user.username')
+                                input#username.form-control(value='#{user.username}', name="username")
+                            div.form-group
+                                label(for='name')= _.i18n('user.name')
+                                input#name.form-control(value='#{user.name}', name="name")
+                            div.form-group
+                                label(for='password')= _.i18n('user.password')
+                                input#password.form-control(name="password", type="password")
+                            div.form-group
+                                label(for='confirmPassword')= _.i18n('user.confirm_password')
+                                input#confirmPassword.form-control(name="confirmPassword", type="password")
+                            div.checkbox
+                                label(style="padding: 0px;")
+                                    input#isAdmin.form-control(checked=user.admin, name="isAdmin", type="checkbox", disabled=_userId==user.id)
+                                    | #{'  ' + _.i18n('user.is_admin')}
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('error')
+                div.modal-body
+                    ul
+                        if (messages)
+                            for message in messages
+                                li= _.i18n(message)
+
+block page_scripts
+    script(type='text/javascript').
+        $(function () {
+            $('.form-control').change(function () {
+                $(this).addClass('changed');
+            });
+        });
+    if (messages)
+        script(type="text/javascript").
+            $('#messagesModal').modal('show');

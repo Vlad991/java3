@@ -1,0 +1,9 @@
+extends ./layout.jade
+block vars
+    - body_class = "bg-black"
+block content
+    div.error-page
+        h2.headline 401
+        div.error-content
+            h3 <i class="fa fa-warning text-yellow"></i> Oops, no access to this page.
+            p You are not authorized to access this page. Please, login.

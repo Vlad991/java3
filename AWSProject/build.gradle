@@ -1,0 +1,52 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.1.1.RELEASE'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'war'
+    id "org.springframework.boot" version "2.1.1.RELEASE"
+    id "io.spring.dependency-management" version "1.0.6.RELEASE"
+}
+
+group 'com.awsprj'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url("https://plugins.gradle.org/m2/")
+        }
+        maven{
+            url("https://repo.spring.io/libs-milestone")
+        }
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.M2'
+        mavenBom "org.springframework.cloud:spring-cloud-stream-dependencies:Fishtown.M3"
+        mavenBom 'org.springframework.boot:spring-boot-dependencies:2.1.1.RELEASE'
+        //       mavenBom "org.springframework.cloud:spring-cloud-dependencies:Finchley.RELEASE"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    compile 'org.springframework.integration:spring-integration-core'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-cache'
+}

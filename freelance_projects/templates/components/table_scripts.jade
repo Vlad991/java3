@@ -1,0 +1,35 @@
+script(type='text/javascript').
+    $(function() {
+        $('##{tableData.id}').dataTable({
+            'dom':          '<<"row"<"col-xs-6"f><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+            'searching':    true,
+            'lengthChange': false,
+            'scrollX':      true,
+            'pageLength':   30,
+            'language': {
+                            'emptyTable':     '#{ _.i18n("datatable.emptyTable") }',
+                            'info':           '#{ _.i18n("datatable.info") }',
+                            'infoEmpty':      '#{ _.i18n("datatable.infoEmpty") }',
+                            'infoFiltered':   '#{ _.i18n("datatable.infoFiltered") }',
+                            'infoPostFix':    '#{ _.i18n("datatable.infoPostFix") }',
+                            'thousands':      '#{ _.i18n("datatable.thousands") }',
+                            'lengthMenu':     '#{ _.i18n("datatable.lengthMenu") }',
+                            'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                            'processing':     '#{ _.i18n("datatable.processing") }',
+                            'search':         '#{ _.i18n("datatable.search") }',
+                            'zeroRecords':    '#{ _.i18n("datatable.zeroRecords") }',
+                            'paginate': {
+                                'first':      '#{ _.i18n("datatable.paginate.first") }',
+                                'last':       '#{ _.i18n("datatable.paginate.last") }',
+                                'next':       '#{ _.i18n("datatable.paginate.next") }',
+                                'previous':   '#{ _.i18n("datatable.paginate.previous") }'
+                            },
+                            'aria': {
+                                'sortAscending':  '#{ _.i18n("datatable.aria.sortAscending") }',
+                                'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                            }
+                        }
+            !{if (!tableData.dontSort) ", order: [[ 0, 'desc' ]]" }
+            !{if (tableData.columnDefs) ", columnDefs: " + tableData.columnDefs}
+        });
+    });

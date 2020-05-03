@@ -1,0 +1,165 @@
+extends ../../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('invoices.inbound.index.title')
+        div.controls
+            a.btn.btn-success(href="/accounting/inbound/invoice")= _.i18n('invoices.inbound.new.add')
+    //- Main content
+    section.content
+        div.row: div.col-md-12: div.box.box-primary: div.box-body
+            form#filterForm(role="form", action="/accounting/inbound/filter", method="post")
+                input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                div.row
+                    div.col-md-6: div.form-group
+                        input#searchToken.form-control(name='searchToken', value=searchToken, placeholder=_.i18n('invoices.inbound.filter.search'), type='text')
+
+                    div.col-md-2: div.form-group.controls
+                        button.btn.btn-primary(onclick="$('#filterForm').submit();")= _.i18n('invoices.inbound.filter.apply')
+                        a.btn.btn-default(href="/accounting/inbound/reset_filter")= _.i18n('invoices.inbound.filter.reset')
+                div.row
+                    div.col-md-3: div.form-group
+                        label(for='paidFrom')= _.i18n('invoices.inbound.filter.date.from')
+                        div.input-group
+                            div.input-group-addon
+                                i.fa.fa-clock-o
+                            input#paidFrom.form-control.datepicker(name='paidFrom', value=_.fmt.date(paidFrom), data-date-format="DD.MM.YYYY", type='text')
+                    div.col-md-3: div.form-group
+                        label(for='paidTo')= _.i18n('invoices.inbound.filter.date.to')
+                        div.input-group
+                            div.input-group-addon
+                                i.fa.fa-clock-o
+                            input#paidTo.form-control.datepicker(name='paidTo', value=_.fmt.date(paidTo), data-date-format="DD.MM.YYYY", type='text')
+
+
+        div.row: div.col-xs-12: div.box: div.box-body: div.table-responsive
+            table#inboundInvoiceList.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                thead: tr
+                    th= _.i18n('invoices.inbound.table.invoice_date')
+                    th= _.i18n('invoices.inbound.table.supplier')
+                    th= _.i18n('invoices.inbound.table.invouce_number')
+                    th= _.i18n('invoices.inbound.table.total_amount')
+                    th= _.i18n('invoices.inbound.table.currency')
+                    th= _.i18n('invoices.inbound.table.pay_till')
+                    th= _.i18n('invoices.inbound.table.paid_on')
+                    th= _.i18n('invoices.inbound.table.comments')
+
+block page_scripts
+    script(type="text/javascript").
+        $(function () {
+            $(function () {
+                $('.datepicker').datetimepicker({
+                    language: '#{_.lang()}',
+                    format: 'DD.MM.YYYY'
+                });
+            });
+
+            $('#status').multiselect({
+                buttonWidth: "100%",
+                nonSelectedText: "-",
+                numberDisplayed: 4,
+                nSelectedText: "#{ _.i18n('multiselect.nselected') }",
+                allSelectedText: "#{ _.i18n('multiselect.all_selected') }"
+            });
+
+            var getParameter = function (theParameter) {
+                var params = window.location.search.substr(1).split('&');
+                for (var i = 0; i < params.length; i++) {
+                    var p = params[i].split('=');
+                    if (p[0] == theParameter) {
+                        return decodeURIComponent(p[1]);
+                    }
+                }
+                return false;
+            };
+
+            var start = 0;
+            try {
+                var pageParam = parseInt(getParameter('page'));
+                if (!isNaN(pageParam)) {
+                    if (pageParam) start = pageParam * 30;
+                }
+            } catch (e) {
+            }
+
+            var table = $('#inboundInvoiceList');
+
+            table.dataTable({
+                'serverSide': true,
+                'ajax': {
+                    'url': '/accounting/inbound',
+                    'type': 'POST',
+                    'error': function () {
+                        $(
+                                '<div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">' +
+                                '  <i class="fa fa-ban"></i>' +
+                                '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                '  #{_.i18n("invoice.inbound.table.error.data")}' +
+                                '</div>'
+                        ).insertBefore($('div.table-responsive'));
+                    },
+                    'data': {
+                        "#{_.attr('_csrf').parameterName}": "#{_.attr('_csrf').token}"
+                    }
+                },
+                'dom': '<<"row"<"col-xs-6"><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+                'lengthChange': false,
+                'scrollX': true,
+                'displayStart': start,
+                'pageLength': 30,
+                'language': {
+                    'emptyTable': '#{ _.i18n("datatable.emptyTable") }',
+                    'info': '#{ _.i18n("datatable.info") }',
+                    'infoEmpty': '#{ _.i18n("datatable.infoEmpty") }',
+                    'infoFiltered': '#{ _.i18n("datatable.infoFiltered") }',
+                    'infoPostFix': '#{ _.i18n("datatable.infoPostFix") }',
+                    'thousands': '#{ _.i18n("datatable.thousands") }',
+                    'lengthMenu': '#{ _.i18n("datatable.lengthMenu") }',
+                    'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                    'processing': '#{ _.i18n("datatable.processing") }',
+                    'search': '#{ _.i18n("datatable.search") }',
+                    'zeroRecords': '#{ _.i18n("datatable.zeroRecords") }',
+                    'paginate': {
+                        'first': '#{ _.i18n("datatable.paginate.first") }',
+                        'last': '#{ _.i18n("datatable.paginate.last") }',
+                        'next': '#{ _.i18n("datatable.paginate.next") }',
+                        'previous': '#{ _.i18n("datatable.paginate.previous") }'
+                    },
+                    'aria': {
+                        'sortAscending': '#{ _.i18n("datatable.aria.sortAscending") }',
+                        'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                    }
+                },
+                'order': [[0, 'desc']],
+                'columns': [
+                    {'data': 'invoiceDate'},
+                    {'data': 'supplier'},
+                    {'data': 'invoiceNumber'},
+                    {'data': 'amount'},
+                    {'data': 'currency'},
+                    {'data': 'payTill'},
+                    {'data': 'paidOn'},
+                    {'data': 'comment'},
+                    {'data': 'id'}
+                ],
+                'columnDefs': [
+                    {'type': 'de_date', 'targets': 0},
+                    {'type': 'de_date', 'targets': 5},
+                    {'type': 'de_date', 'targets': 6},
+                    {'visible': false, 'targets': 8}
+                ],
+                'createdRow': function (row, data) {
+                    $(row).click(function() {
+                        window.location = "/accounting/inbound/invoice/" + data['id'];
+                    });
+                }
+            });
+
+            table.on('page.dt', function () {
+                try {
+                    history.pushState({}, "", "/accounting/inbound?page=" + table.DataTable().page());
+                } catch (e) {
+                }
+            });
+        });

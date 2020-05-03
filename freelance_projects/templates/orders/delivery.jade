@@ -1,0 +1,82 @@
+extends ../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('delivery.data.table.header')}
+        div.controls
+            button#submitShipped.btn.btn-success.disabled(disabled)
+                span#submitShippedSpinner.fa.fa-spinner.fa-spin.hide
+                span#submitShippedError.fa.fa-exclamation-triangle.text-red.hide
+                = _.i18n('delivery.data.mark_as_shipped')
+            a.btn.btn-default(href="/delivery/reset_filter")= _.i18n('delivery.data.should_be_marked')
+            button#uploadDeliveryData.btn.btn-info(onclick="$('#deliveryDataFile').click(); return false;")
+                span#uploadDeliveryDataSpinner.fa.fa-spinner.fa-spin.hide
+                span#uploadDeliveryDataError.fa.fa-exclamation-triangle.text-red.hide
+                = _.i18n('delivery.data.file_upload')
+
+    //- Main content
+    section.content
+        div.row
+            div.col-xs-12
+                div.box
+                    div.box-body
+                        div.table-responsive
+                            table#deliveryDataList.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                                thead
+                                    tr
+                                        th
+                                            input#delivery-data-select-all(name='delivery-data-select-all', type='checkbox')
+                                        th= _.i18n('delivery.data.table.order_id')
+                                        th= _.i18n('delivery.data.table.sale_record_number')
+                                        th= _.i18n('delivery.data.table.shipped_on')
+                                        th= _.i18n('delivery.data.table.order_source')
+                                        th= _.i18n('delivery.data.table.delivery_service')
+                                        th= _.i18n('delivery.data.table.tracking_number')
+
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3#modalHeader
+                div#modalContent.modal-body
+
+
+    form#deliveryDataForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#deliveryDataFile(type="file", name="file", accept=".csv", onchange="uploadDeliveryDataFile();")
+
+block page_scripts
+    script(src="/js/order_delivery.js", type="text/javascript")
+    script(type="text/javascript").
+        var tableLoadErrorMessage = '#{_.i18n("delivery.data.table.load.error")}';
+        var modalErrorHeader = '#{_.i18n("delivery.data.table.errors")}';
+        var modalSuccessHeader = '#{_.i18n("delivery.data.modal.header.success")}';
+        var modalSuccessTotal = '#{_.i18n("delivery.data.upload.modal.total")}';
+        var modalSuccessUpdated = '#{_.i18n("delivery.data.upload.modal.updated")}';
+        var modalSuccessIds = '#{_.i18n("delivery.data.upload.modal.id")}';
+        var tplVarTableText = {
+            'emptyTable': '#{ _.i18n("datatable.emptyTable") }',
+            'info': '#{ _.i18n("datatable.info") }',
+            'infoEmpty': '#{ _.i18n("datatable.infoEmpty") }',
+            'infoFiltered': '#{ _.i18n("datatable.infoFiltered") }',
+            'infoPostFix': '#{ _.i18n("datatable.infoPostFix") }',
+            'thousands': '#{ _.i18n("datatable.thousands") }',
+            'lengthMenu': '#{ _.i18n("datatable.lengthMenu") }',
+            'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+            'processing': '#{ _.i18n("datatable.processing") }',
+            'search': '#{ _.i18n("datatable.search") }',
+            'zeroRecords': '#{ _.i18n("datatable.zeroRecords") }',
+            'paginate': {
+                'first': '#{ _.i18n("datatable.paginate.first") }',
+                'last': '#{ _.i18n("datatable.paginate.last") }',
+                'next': '#{ _.i18n("datatable.paginate.next") }',
+                'previous': '#{ _.i18n("datatable.paginate.previous") }'
+            },
+            'aria': {
+                'sortAscending': '#{ _.i18n("datatable.aria.sortAscending") }',
+                'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+            }
+        };

@@ -1,0 +1,28 @@
+extends ../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('users.list.title')}
+        div.controls
+            a.btn.btn-primary(href="/users/edit")= _.i18n('users.list.add')
+    //- Main content
+    section.content
+        div.row
+            div.col-xs-12
+                div.box
+                    div.box-body
+                        div.table-responsive
+                            table#usersTable.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                                thead
+                                    tr
+                                        th= _.i18n('user.username')
+                                        th= _.i18n('user.is_admin')
+                                        th
+                                tbody
+                                    each user, i in users
+                                        tr
+                                            td= user.username
+                                            td= user.isAdmin() ? '+' : '-'
+                                            td
+                                                a(href="/users/edit?id=#{user.id}")= _.i18n('users.list.edit')

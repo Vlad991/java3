@@ -1,0 +1,226 @@
+body > .header .logo {
+    font-family: 'Changa One', sans-serif !important;
+    font-size: 36px;
+}
+
+div.login-langs {
+    width: 110px;
+    margin: 0 auto;
+}
+
+div.login-langs * {
+    padding: 5px;
+}
+
+div.dataTables_filter .form-control {
+    min-width: 300px;
+}
+
+table.table.selectable tr:hover {
+    cursor: pointer;
+}
+
+table.table.selectable > tbody > tr:hover > td {
+    color: #333 !important;
+    background-color: #f5d89c !important;
+}
+
+.right-side > .content-header > .controls {
+    float: right;
+    background: transparent;
+    margin-top: 0;
+    margin-bottom: 0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.right-side > .content-header > .controls > .form-control {
+    float: left;
+    width: auto;
+    margin-right: 5px;
+}
+
+.right-side > .content-header > .controls > .btn {
+    margin-right: 5px;
+}
+
+.right-side .box-header > .controls {
+    float: right;
+    background: transparent;
+    margin-top: 0;
+    margin-bottom: 0;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.controls > .btn {
+    margin-right: 5px;
+}
+
+.form-control.changed {
+    background-color: #ebe29e;
+}
+
+.comment.changed {
+    background-color: #ebe29e !important;
+}
+
+tr.New td {
+
+}
+
+tr.Checked td {
+    background-color: #f3ffc2 !important;
+}
+
+tr.Ordered td {
+    background-color: #b1f3b7 !important;
+}
+
+tr.Delivery td {
+    background-color: #d0b5f5 !important;
+}
+
+tr.InStock td {
+    background-color: #90d4ff !important;
+}
+
+tr.InStockUnpaid td {
+    background-color: #d4ecff !important;
+}
+
+tr.NotAvailable td {
+    background-color: #efc5ad !important;
+}
+
+tr.Shipped td {
+    color: #f9f9f9 !important;
+    background-color: #00a65a !important;
+}
+
+tr.Cancelled td {
+    color: #f9f9f9 !important;
+    background-color: #f56954 !important;
+}
+
+tr.ShippedFromSupplierWarehouse td {
+    color: #f9f9f9 !important;
+    background-color: #ba5418 !important;
+}
+
+tr.TRIGGERED td {
+    background-color: #d4ecff !important;
+}
+
+tr.FAILED td {
+    color: #f9f9f9 !important;
+    background-color: #900513 !important;
+}
+
+tr.CANCELED td {
+    color: #f9f9f9 !important;
+    background-color: #f56954 !important;
+}
+
+tr.GENERATED td {
+    background-color: #b1f3b7 !important;
+}
+
+tr.SUCCESS td {
+    background-color: #b1f3b7 !important;
+}
+
+tr.WARN td {
+    background-color: #f3ffc2 !important;
+}
+
+tr.FAILED td {
+    color: #f9f9f9 !important;
+    background-color: #f56954 !important;
+}
+
+div.dataTables_filter label {
+    float: left !important;
+}
+
+/* Older colors for orders rows - START */
+
+td.New {
+
+}
+
+td.Checked {
+    background-color: #f3ffc2 !important;
+}
+
+td.Ordered {
+    background-color: #b1f3b7 !important;
+}
+
+td.Delivery {
+    background-color: #d0b5f5 !important;
+}
+
+td.InStock {
+    background-color: #90d4ff !important;
+}
+
+td.InStockUnpaid {
+    background-color: #d4ecff !important;
+}
+
+td.NotAvailable {
+    background-color: #efc5ad !important;
+}
+
+td.Shipped {
+    color: #f9f9f9 !important;
+    background-color: #00a65a !important;
+}
+
+td.Cancelled {
+    color: #f9f9f9 !important;
+    background-color: #f56954 !important;
+}
+
+td.ShippedFromSupplierWarehouse {
+    color: #f9f9f9 !important;
+    background-color: #ba5418 !important;
+}
+
+tr.order-item-state-warning td {
+    background-color: #ffb348 !important;
+}
+
+tr.added-row td {
+    color: #f9f9f9 !important;
+    background-color: #00a65a !important;
+}
+
+table.table.selectable > tbody > tr.added-row:hover > td {
+    color: #f9f9f9 !important;
+    background-color: #084600 !important;
+}
+
+/* Older colors for orders rows - END */
+
+tr.credit-note-include td:not(.not-in-credit-note) {
+    background-color: #ffb3b3 !important;
+}
+
+@media (min-width: 768px) {
+    .modal-xl {
+        width: 90%;
+        max-width:1200px;
+    }
+}
+
+.top-margin {
+    margin-top: 27px;
+}
+
+.color-warning {
+    color: #ffb348 !important;
+}

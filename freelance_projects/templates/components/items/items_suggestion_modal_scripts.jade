@@ -1,0 +1,100 @@
+script(type='text/javascript').
+    var ItemsSuggestionModal = {
+
+        table: null,
+
+        init: function (modalId, callbackName) {
+            try {
+
+                if (ItemsSuggestionModal.table) {
+                    return;
+                }
+
+                ItemsSuggestionModal.table = $('#' + modalId + '__items_table');
+
+                ItemsSuggestionModal.table.dataTable({
+                    'serverSide': true,
+                    'ajax': {
+                        'url': '/items/list',
+                        'error': function () {
+                            $(
+                                    '<div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">' +
+                                    '  <i class="fa fa-ban"></i>' +
+                                    '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                    '  #{_.i18n("items_suggestion_modal.error.data")}' +
+                                    '</div>'
+                            ).insertBefore($('div.table-responsive'));
+                        }
+                    },
+                    'dom': '<<"row"<"col-xs-6"f><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+                    'lengthChange': false,
+                    'scrollX': true,
+                    'displayStart': 0,
+                    'pageLength': 0,
+                    'sort': false,
+                    'language': {
+                        'emptyTable': '#{ _.i18n("datatable.emptyTable") }',
+                        'info': '#{ _.i18n("datatable.info") }',
+                        'infoEmpty': '#{ _.i18n("datatable.infoEmpty") }',
+                        'infoFiltered': '#{ _.i18n("datatable.infoFiltered") }',
+                        'infoPostFix': '#{ _.i18n("datatable.infoPostFix") }',
+                        'thousands': '#{ _.i18n("datatable.thousands") }',
+                        'lengthMenu': '#{ _.i18n("datatable.lengthMenu") }',
+                        'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                        'processing': '#{ _.i18n("datatable.processing") }',
+                        'search': '#{ _.i18n("datatable.search") }',
+                        'zeroRecords': '#{ _.i18n("datatable.zeroRecords") }',
+                        'paginate': {
+                            'first': '#{ _.i18n("datatable.paginate.first") }',
+                            'last': '#{ _.i18n("datatable.paginate.last") }',
+                            'next': '#{ _.i18n("datatable.paginate.next") }',
+                            'previous': '#{ _.i18n("datatable.paginate.previous") }'
+                        },
+                        'aria': {
+                            'sortAscending': '#{ _.i18n("datatable.aria.sortAscending") }',
+                            'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                        }
+                    },
+                    'order': [[0, 'asc']],
+                    'columns': [
+                        {'data': 'itemArticleNumber'},
+                        {'data': 'itemName'},
+                        {'data': 'itemPriceNetto'},
+                        {'data': 'itemReferenceOe'},
+                        {'data': 'itemReferenceOem'},
+                        {'data': 'itemReferenceOther'}
+                    ],
+                    'createdRow': function (row, data) {
+                        $(row).click(function () {
+                            $(row).addClass('added-row');
+                            window[callbackName](data);
+                        });
+                    }
+                });
+
+            } catch (e) {
+                console.log(e);
+            }
+
+        },
+
+        show: function (modalId, callbackName) {
+            try {
+                ItemsSuggestionModal.init(modalId, callbackName);
+                ItemsSuggestionModal.table.DataTable().page.len(10).draw();
+                $('#' + modalId).modal('show');
+            } catch (e) {
+                console.log(e);
+            }
+        },
+
+        hide: function (modalId) {
+            try {
+                ItemsSuggestionModal.table.DataTable().page.len(0).draw();
+                $('#' + modalId).modal('hide');
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+    };

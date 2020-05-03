@@ -1,0 +1,348 @@
+spring:
+  application:
+    name: reindeer
+  profiles:
+    active: ${profile:dev}
+  messages:
+    basename: messages/messages
+
+server:
+  port: 8080
+  error:
+    whitelabel:
+      enabled: false
+
+flyway:
+  locations: classpath:db/migrations
+  baselineOnMigrate: true
+
+multipart:
+  maxFileSize: 10Mb
+
+logging:
+  level:
+    org.jooq.Constants: 'WARN'
+
+reindeer:
+  ebay1:
+    token: "AgAAAA**AQAAAA**aAAAAA**6LgMVw**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6AEmIajAZKCpQydj6x9nY+seQ**JocCAA**AAMAAA**ejOAVNbyPZSPvYUJ/8RWN8bo8junf9UjpN9PAOlVIQARnNKqm4TmoaPifiVp0i/eEVm1uSTLkxVDDDIoMg/58ccEqo7LXPwzrhhkfIFxP/jc4PC4F+qn2qIoLGwNkP1BH2hiR4m9AN/4weWS+vadH3oEBihLfl5ntpEOL8qQwChp3MOj/ngXkC1GVuyxXyMx4EQpFCdz/sQjZIprS5/zQYB2D0fXWobJPO2J3KnfbOo8gqb82fbSFdnSRtui48WoCkI+KvvKDr7bXoIsVRO8LILZ/CB4XNlBiOqRtnKBpH/cYnFYXPVFkVrQzbsf+HJyRe0APne1cJs5zIs7Y6KOwWLuL+Di2Cnq+tykdukGrgBkki0bei8MOqmEzVQsA3/ZWLw0X12p6nB4gBBTj1h1e7BJKLRlxlBS9ctDuIBA82sYipR7MRg1svMhVY4lTA01s5OZD4BZ3QpuvWG5R1worOzW/+ncbHc3cLjshBr9m32foaslGnedIIRPSPg5fiNmSxg0nTHNqYfYLcX5gYoVK+amMfiOWd1FMo931/8evxXCdHxohtjafXMmtpXKoQ13bcZTkl++gWVMrOH/aLJKdfK9cD/pYRzu8Du7gMNYS7LchMxWp9uuaObfsmvOUVHiAOR/wJ6rUACkAlp2IjWpcf6p9PANbJfFBFh4jwl3SggZOJe+o+j56w8XLxEmwyNrewOwlKo0H0CdWLoxDNTiXoL9vMVcis70vnT2RBsoOGlAcSJX7P0IMoM7RuetBzUJ"
+    url: "https://api.ebay.com/wsapi"
+    articleNumber: Herstellernummer,Artikelnummer,Codice Prodotto,Manufacturer Part Number,Article Number
+    referenceOE: Referenznummer(n) OE,Numero riferimento OE,NumberReference (OE)
+    referenceOEM: Referenznummer(n) OEM,Riferimento,Upc
+    furtherReference: Weitere Artikelnummer,Further Article Number
+    log: false
+    timer: "0 0/30 * * * ?"
+  ebay2:
+    token: "AgAAAA**AQAAAA**aAAAAA**Cb80VQ**nY+sHZ2PrBmdj6wVnY+sEZ2PrA2dj6AHlYamC5iLqQ+dj6x9nY+seQ**3dACAA**AAMAAA**PZQzJ7AqWnoWpjeUBgDk8t/AGjxd9AuK4MKSuT+ilp9IZ6aAp6bs4LjEyYPUPvxKEap7gcnE+C/wu0oA8kG8qTLjf+O6N7PBcaaLNjhr1qWT302Qzpz0E8csuE69XYPCm006wy/iDZxE+kU5HI4UsvqejbVw4wJO0akbioK95VYSce2g53qm8gAn+90CBc6DHeNiDd1VedQ1YlOp33iGwDqyPsNLrBQwd/aW55/bgoUUbOed0EEEnTkDkCjjRrm8tQIVkxN5Op9YpaIFJutXW4j1PR7VzpLp+4uAn5WEts0z9G8kmcwvWAptIt4JgllapM1KvWprz+zWoFQJluWIPJ406be72Suj7el8FrMUh8hjmrp4YcRWCtnDDy1GBmq5WInQ7MwcLr+6zxs3If1hyKHfnZcPIuPuvtJt7wUy353azs1Q7sA5J+N7BF0KYQmgroNfFkxMymJV6/b3UQzqJvUcqbYGQX8dLNV/Y7NUQAxZR3KL2u3p5agM5nUOFutiyZhzxvNmeOemo1AXAddNTJ+AUtz1Vyj8ss/i0TeDN33aZSLMQddwvP7psCPEKlCny/+2qmVcqpVBzeFBjiwePVtc4qexq5GmjUSncnPdlELFBAnNx76CPFgrMG9cKgf0Hxf1sg3BjZnbWrwHh0JGVoDEE7lDLs1j+vLNCnHH7vi+FK5j86X+lHywV5r5splAH7D7e9wF+QtSEFF7nur+W4L9iSSh9xZvvR4gFEo1DP5JD/GhEljiPYBicu4zOEil"
+    url: "https://api.ebay.com/wsapi"
+    articleNumber: Herstellernummer,Artikelnummer,Codice Prodotto,Manufacturer Part Number,Article Number
+    referenceOE: Referenznummer(n) OE,Numero riferimento OE,NumberReference (OE)
+    referenceOEM: Referenznummer(n) OEM,Riferimento,Upc
+    furtherReference: Weitere Artikelnummer,Further Article Number
+    log: false
+    timer: "0 5/30 * * * ?"
+  ajs:
+    timer: "0 0/30 * * * ?"
+  febest:
+    timer: "0 0/30 * * * ?"
+
+---
+
+spring:
+  profiles: prod
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost/reindeer?useUnicode=yes&characterEncoding=UTF-8
+#    url: jdbc:mysql://localhost/reindeer_test?useUnicode=yes&characterEncoding=UTF-8
+    username: reindeer
+    password: reindeer
+    test-on-borrow: true
+    validation-query: SELECT 1
+  jpa:
+    database: MYSQL
+  mail:
+    enabled: true
+    host: mail.reindeerparts.de
+    port: 587
+    username: web22p4
+    password: Igor1958
+    properties:
+      mail.smtp.from: info@reindeerparts.de
+
+reindeer:
+  ersatzteile:
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3309/usr_web22_8
+      username: web22
+      password: UC0lvO8F
+    timer: "0 10/30 * * * ?"
+  kfzteile_handel:
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://server35.webgo24.de:3306/web109_db2
+      username: web109_2
+      password: 45TV@klhN
+    timer: "0 10/30 * * * ?"
+  reindeerparts:
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3309/usr_web22_1?zeroDateTimeBehavior=convertToNull
+      username: web22
+      password: UC0lvO8F
+    timer: "0 20/30 * * * ?"
+  reindeerb2b:
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3309/usr_web22_3?zeroDateTimeBehavior=convertToNull
+      username: web22
+      password: UC0lvO8F
+    timer: "0 20/30 * * * ?"
+  nfz_lkw:
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3309/usr_web22_6
+      username: web22
+      password: UC0lvO8F
+    timer: "0 15/30 * * * ?"
+
+---
+
+spring:
+  profiles: reindeer
+  application:
+    name: reindeer
+  datasource:
+    url: jdbc:mysql://localhost/reindeer?useUnicode=yes&characterEncoding=UTF-8
+
+server:
+  port: 8080
+
+reindeer:
+  companyName: Reindeer Export And Logistics
+  ebay1:
+    enabled: true
+    importStart: 20-11-2014 00:00:00
+  ebay2:
+    enabled: true
+    importStart: 15-04-2015 00:00:00
+  ersatzteile:
+    enabled: true
+    importStart: 01-04-2015 00:00:00
+  kfzteile_handel:
+    enabled: true
+    importStart: 01-04-2015 00:00:00
+  reindeerparts:
+    enabled: true
+    importStart: 01-04-2015 00:00:00
+  reindeerb2b:
+    enabled: true
+    importStart: 01-09-2017 00:00:00
+  nfz_lkw:
+    enabled: true
+    importStart: 01-12-2015 00:00:00
+  ajs:
+    enabled: false
+    importStart: 01-06-2016 00:00:00
+  febest:
+    enabled: true
+    importStart: 01-06-2016 00:00:00
+  reports:
+    enabled: true
+    importStart: 01-02-2017 00:00:00
+  warehouse:
+    enabled: false
+
+---
+
+spring:
+  profiles: reindeergmbh
+  application:
+    name: reindeergmbh
+  datasource:
+    url: jdbc:mysql://localhost/reindeergmbh?useUnicode=yes&characterEncoding=UTF-8
+
+server:
+  port: 8081
+
+reindeer:
+  companyName: Reindeer Ersatzteile Handels GmbH
+  ebay1:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ebay2:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ersatzteile:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  kfzteile_handel:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  reindeerparts:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  reindeerb2b:
+    enabled: false
+    importStart: 01-09-2017 09:00:00
+  nfz_lkw:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ajs:
+    enabled: false
+    importStart: 01-06-2016 00:00:00
+  febest:
+    enabled: true
+    importStart: 01-06-2016 00:00:00
+  reports:
+    enabled: true
+    importStart: 01-02-2017 00:00:00
+  warehouse:
+    enabled: false
+
+---
+
+spring:
+  profiles: reindeer_test
+  application:
+    name: reindeer_test
+  datasource:
+    url: jdbc:mysql://localhost/reindeer_test?useUnicode=yes&characterEncoding=UTF-8
+
+server:
+  port: 8082
+
+reindeer:
+  companyName: Reindeer Ersatzteile Handels GmbH
+  ebay1:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ebay2:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ersatzteile:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  kfzteile_handel:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  reindeerparts:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  reindeerb2b:
+    enabled: false
+    importStart: 01-09-2017 09:00:00
+  nfz_lkw:
+    enabled: false
+    importStart: 11-01-2015 09:00:00
+  ajs:
+    enabled: false
+    importStart: 01-06-2016 00:00:00
+  febest:
+    enabled: true
+    importStart: 01-06-2016 00:00:00
+  reports:
+    enabled: false
+    timer: "0 0 10 1 * ?"
+    importStart: 01-02-2017 00:00:00
+  warehouse:
+    enabled: false
+
+
+---
+
+spring:
+  profiles: dev
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+#    url: jdbc:mysql://localhost/reindeer?useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://192.168.0.0:3306/reindeergmbh?useUnicode=yes&characterEncoding=UTF-8
+    username: reindeer
+    password: reindeer
+    test-on-borrow: true
+    validation-query: SELECT 1
+  jpa:
+    database: MYSQL
+  mail:
+    enabled: false
+    host: mail.reindeerparts.de
+    port: 587
+    username: web22p4
+    password: Igor1958_WRONG
+    properties:
+      mail.smtp.from: info@reindeerparts.de
+
+reindeer:
+  companyName: Reindeer Export And Logistics
+  template:
+    cache: false
+  ebay1:
+    enabled: false
+    log: true
+    timer: "0 0/2 * * * ?"
+    importStart: 20-11-2014 00:00:00
+  ebay2:
+    enabled: false
+    log: true
+    timer: "0 1/2 * * * ?"
+    importStart: 20-11-2014 00:00:00
+  ersatzteile:
+    enabled: false
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3307/usr_web22_8
+      username: web22
+      password: UC0lvO8F
+    timer: "0 0/1 * * * ?"
+    importStart: 01-04-2014 00:00:00
+  kfzteile_handel:
+    enabled: false
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://server35.webgo24.de:3306/web109_db2
+      username: web109_2
+      password: 45TV@klhN
+    timer: "0 0/1 * * * ?"
+    importStart: 01-04-2014 00:00:00
+  reindeerparts:
+    enabled: false
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3307/usr_web22_1?zeroDateTimeBehavior=convertToNull
+      username: web22
+      password: UC0lvO8F
+    timer: "0 0/1 * * * ?"
+    importStart: 01-04-2014 00:00:00
+  reindeerb2b:
+    enabled: false
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3307/usr_web22_3?zeroDateTimeBehavior=convertToNull
+      username: web22
+      password: UC0lvO8F
+    timer: "0 0/1 * * * ?"
+    importStart: 01-09-2017 00:00:00
+  nfz_lkw:
+    enabled: false
+    datasource:
+      dialect: MYSQL
+      url: jdbc:mysql://localhost:3307/usr_web22_6
+      username: web22
+      password: UC0lvO8F
+    timer: "0 0/1 * * * ?"
+    importStart: 01-12-2015 00:00:00
+  ajs:
+    enabled: false
+    timer: "0 0/2 * * * ?"
+    importStart: 01-06-2016 00:00:00
+  febest:
+    enabled: false
+    timer: "0 0/2 * * * ?"
+    importStart: 01-06-2016 00:00:00
+  reports:
+    enabled: true
+    timer: "0 0 10 1 * ?"
+    importStart: 01-02-2017 00:00:00
+  warehouse:
+    enabled: true

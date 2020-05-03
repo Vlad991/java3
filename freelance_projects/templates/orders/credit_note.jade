@@ -1,0 +1,99 @@
+extends ../layout_logged_in
+block content_logged_id
+    section.content-header
+        h1= _.i18n('orders.credit_note.title')
+        div.controls
+            button.btn.btn-primary(onclick="submitCreditNote();")= _.i18n('orders.credit_note.save.button')
+            a.btn.btn-default(href="/orders/edit?id=#{order.id}")= _.i18n('orders.credit_note.cancel.button')
+        div: h5= _.i18n('orders.credit_note.description')
+    section.content
+        - items = order.items;
+        form#creditNoteEditForm(method='POST')
+            input(type='hidden', name='orderId', value='#{order.id}')
+            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.order_info')
+                        div.box-body
+                            div.form-group.table-responsive
+                                table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                                    tr
+                                        td
+                                            input.form-control(type="checkbox", name="deliveryPriceIncluded", checked=(order.creditNote.includeDeliveryPrice ? "checked" : undefined))
+                                        td: b= _.i18n('orders.edit.order_info.delivery_price_amount_netto')
+                                        td= _.fmt.moneyWithCurrency(order.deliveryPriceNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.delivery_price_amount_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.deliveryPriceBruttoAmount, order.currency)
+                                    tr
+                                        td
+                                            input.form-control(type="checkbox", name="paymentProcessingFeeIncluded", checked=(order.creditNote.includePaymentProcessingFee ? "checked" : undefined))
+                                        td: b= _.i18n('orders.edit.order_info.payment_processing_fee_netto')
+                                        td= _.fmt.moneyWithCurrency(order.paymentProcessingFeeNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.payment_processing_fee_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.paymentProcessingFeeBruttoAmount, order.currency)
+                                    tr
+                                        td
+                                        td: b= _.i18n('orders.edit.order_info.delivery_vat_percentage')
+                                        td= _.fmt.number(order.deliveryPriceVatPercentage)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.payment_processing_fee_vat_percentage')
+                                        td= _.fmt.number(order.paymentProcessingFeeVatPercentage)
+                                    tr
+                                        td
+                                            input.form-control(type="checkbox", name="discountIncluded", checked=(order.creditNote.includeDiscount ? "checked" : undefined))
+                                        td: b= _.i18n('orders.edit.order_info.discount_amount')
+                                        td= _.fmt.moneyWithCurrency(order.discountAmount, order.currency)
+                                        td.not-in-credit-note(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.vat_percentage')
+                                        td.not-in-credit-note= _.fmt.number(order.vatPercentage)
+                                    tr
+                                        td
+                                        td: b= _.i18n('orders.edit.order_info.total_netto')
+                                        td= _.fmt.moneyWithCurrency(order.totalPriceNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.total_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.totalPriceBruttoAmount, order.currency)
+
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.items')
+                        div.box-body
+                            div.table-responsive
+                                table#itemsTable.table.table-bordered.table-striped.table-hover(role='grid')
+                                    thead
+                                        tr
+                                            th
+                                                input#selectAllItems.form-control(type="checkbox")
+                                            th= _.i18n('items.table.name')
+                                            th= _.i18n('items.table.sale_record_number')
+                                            th= _.i18n('items.table.article_number')
+                                            th= _.i18n('items.table.amount')
+                                            th= _.i18n('items.table.price_netto')
+                                            th= _.i18n('items.table.price_brutto')
+                                            th= _.i18n('items.table.discount_percentage')
+                                            th= _.i18n('items.table.external_id')
+                                            th= _.i18n('items.table.reference_oe')
+                                            th= _.i18n('items.table.reference_oem')
+                                            th= _.i18n('items.table.reference_other')
+                                    tbody
+                                        each item, i in items
+                                            tr
+                                                td
+                                                    input.form-control(type='hidden', name='items[' + i + '].itemId', value= item.id)
+                                                    input.form-control(type="checkbox", name='items[' + i + '].included', checked=(order.creditNote.isItemIncluded(item) ? "checked" : undefined))
+                                                td= item.name
+                                                td= item.saleRecordNumber
+                                                td= item.articleNumber
+                                                td= item.amount
+                                                td= _.fmt.moneyWithCurrency(item.priceNettoAmount, order.currency)
+                                                td= _.fmt.moneyWithCurrency(item.priceBruttoAmount, order.currency)
+                                                td= _.fmt.number(item.discountPercentage)
+                                                td= item.externalReference
+                                                td= item.referenceNumberOE
+                                                td= item.referenceNumberOEM
+                                                td= item.referenceNumberOther
+
+
+block page_scripts
+    script(src="/js/order_credit_note.js", type="text/javascript")

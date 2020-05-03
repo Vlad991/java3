@@ -1,0 +1,47 @@
+mixin comment(comment, number, prefix)
+    div.comment
+        input(name=prefix + "Comments["+ number +"].id"   , value=comment.id, type="hidden")
+        input(name=prefix + "Comments["+ number +"].text" , value=comment.text, type="hidden")
+        div
+            span= comment.addedBy.name + ":"
+            span.pull-right= _.fmt.time(comment.addedOn)
+        pre= comment.text
+
+mixin comments(comments, prefix)
+    script(type='text/javascript').
+        var appenderClosure = function() {
+            var count = '#{comments.size()}';
+            return function() {
+                var preId = '#{prefix + "CommentText"}'+ count;
+                var name = '#{prefix + "Comments["}' + count + ']';
+                var commentField = $('##{prefix + "CommentText"}');
+                var text = commentField.val();
+                commentField.val('');
+                commentField.removeClass('changed');
+                $('##{prefix + "Comments"}').append(
+                    '<div class="comment changed">' +
+                    '  <input name="' + name + '.text" type="hidden" value="' + text + '">' +
+                    '  <div>' +
+                    '    <span>#{_username}</span>' +
+                    '  </div>' +
+                    '  <pre id="'+ preId+ '"></pre>' +
+                    '</div>'
+                );
+                $('#' + preId).text(text).html();
+                count++;
+            };
+        };
+
+        var appendComment = appenderClosure();
+
+    div.box.box-primary
+        div.box-header
+            h3.box-title= _.i18n('orders.edit.comments')
+        div.box-body
+            div(id=prefix + "Comments")
+                for comment, i in comments
+                    +comment(comment, i, prefix)
+            div.form-group
+                textarea.form-control(id=prefix + "CommentText", rows="6")
+        div.box-footer
+            button.btn.btn-primary(onclick="appendComment(); return false;")= _.i18n('orders.edit.add_comment')

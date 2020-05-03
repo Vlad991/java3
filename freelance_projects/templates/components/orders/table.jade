@@ -1,0 +1,85 @@
+mixin tableCell(order)
+    td(class=order.status.name(), onclick='window.location = "/orders/edit?id=#{order.id}"')
+        block
+
+div.table-responsive
+    table.table.table-bordered.table-hover.table-striped.selectable(id='#{ordersTable.id}', role='grid')
+        thead
+            tr
+                th= _.i18n('orders.table.ordered_on')
+                th= _.i18n('orders.table.item_name')
+                th= _.i18n('orders.table.item_article_number')
+                th= _.i18n('orders.table.items_amount')
+                th= _.i18n('orders.table.sale_record_number')
+                th= _.i18n('orders.table.source')
+                th= _.i18n('orders.table.ordered_from')
+                th= _.i18n('orders.table.eta')
+                th= _.i18n('orders.table.sent_out_on')
+                th= _.i18n('orders.table.payment_status')
+                th= _.i18n('orders.table.delivery_service')
+                th= _.i18n('orders.table.invoice_number')
+                th= _.i18n('orders.table.credit_note_number')
+                if ordersTable.showAssignee
+                    th= _.i18n('orders.table.assignee')
+        tbody
+            each order in ordersTable.orders
+                each item in order.items
+                    tr
+                        +tableCell(order)
+                            | #{ _.fmt.time(order.createdOn) }
+                        +tableCell(order)
+                            | #{ item.name }
+                            span(style='display: none;')= order.customer.name
+                            span(style='display: none;')= order.customer.alias
+                            span(style='display: none;')= order.customer.email
+                            span(style='display: none;')= order.customer.phoneNumber
+                            span(style='display: none;')= order.customer.externalReference
+                            span(style='display: none;')= order.deliveryAddress.name
+                            span(style='display: none;')= order.deliveryAddress.company
+                            span(style='display: none;')= order.deliveryAddress.street1
+                            span(style='display: none;')= order.deliveryAddress.street2
+                            span(style='display: none;')= order.deliveryAddress.postalCode
+                            span(style='display: none;')= order.deliveryAddress.city
+                            span(style='display: none;')= order.deliveryAddress.country
+                            span(style='display: none;')= order.billingAddress.name
+                            span(style='display: none;')= order.billingAddress.company
+                            span(style='display: none;')= order.billingAddress.street1
+                            span(style='display: none;')= order.billingAddress.street2
+                            span(style='display: none;')= order.billingAddress.postalCode
+                            span(style='display: none;')= order.billingAddress.city
+                            span(style='display: none;')= order.billingAddress.country
+                            span(style='display: none;')= order.id
+                            span(style='display: none;')= order.saleRecordNumber
+                            span(style='display: none;')= item.articleNumber
+                            span(style='display: none;')= item.referenceNumberOE
+                            span(style='display: none;')= item.referenceNumberOEM
+                            span(style='display: none;')= item.referenceNumberOther
+                            span(style='display: none;')= item.externalReference
+                            span(style='display: none;')= item.saleRecordNumber
+                            span(style='display: none;')= item.invoiceNumber
+                            span(style='display: none;')= item.creditNoteNumber
+                        +tableCell(order)
+                            | #{ item.articleNumber }
+                        +tableCell(order)
+                            | #{ item.amount }
+                        +tableCell(order)
+                            | #{ order.saleRecordNumber }
+                        +tableCell(order)
+                            | #{ order.source.info }
+                        +tableCell(order)
+                            | #{ item.state.orderedFrom }
+                        +tableCell(order)
+                            | #{ _.fmt.time(item.state.eta) }
+                        +tableCell(order)
+                            | #{ _.fmt.time(order.shippedOn) }
+                        +tableCell(order)
+                            | #{ order.paymentDetails }
+                        +tableCell(order)
+                            | #{ order.deliveryService }
+                        +tableCell(order)
+                            | #{ order.invoiceNumber }
+                        +tableCell(order)
+                            | #{ order.creditNoteNumber }
+                        if ordersTable.showAssignee
+                            +tableCell(order)
+                                | #{ order.assignee ? order.assignee.name : null }

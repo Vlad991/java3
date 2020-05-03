@@ -1,0 +1,101 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.1.1'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'war'
+}
+
+
+apply plugin: 'com.bmuschko.cargo'
+
+group 'com.tutorials'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven{
+        url "http://mvnrepository.com/artifact/"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    //lombok
+    compile 'org.projectlombok:lombok:1.18.2'
+
+    //xml
+    compile 'javax.xml:jaxb-api:2.1'
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
+
+    //hibernate
+    compile 'org.hibernate:hibernate-gradle-plugin:5.3.6.Final'
+    compile 'org.hibernate:hibernate-core:5.3.6.Final'
+    compile 'org.hibernate:hibernate-entitymanager:5.3.6.Final'
+    compile 'org.hibernate:hibernate-hikaricp:5.3.6.Final'
+    compile 'org.hibernate:hibernate-ehcache:5.3.6.Final'
+
+    //jdbc
+    compile 'org.postgresql:postgresql:42.2.5'
+
+    //servlet
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.0'
+    compile group: 'jstl', name: 'jstl', version: '1.2'
+    providedCompile group: 'javax.servlet.jsp', name: 'javax.servlet.jsp-api', version: '2.3.1'
+
+    //spring-aop
+    compile group: 'org.springframework', name: 'spring-aop', version: '5.1.8.RELEASE'
+
+    //spring
+    compile group: 'org.springframework', name: 'spring-context', version: '5.1.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version: '5.1.8.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version: '5.1.2.RELEASE'
+    compile 'org.springframework.data:spring-data-jpa:2.1.2.RELEASE'
+
+    //jackson
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
+    compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.9.5'
+    compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-base', version: '2.9.7'
+    compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+
+    compile group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'
+
+    //slf4j
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
+
+    //log4j
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.12.0'
+
+    //validator
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+    compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.0.17.Final'
+}
+
+cargo {
+    containerId = 'tomcat7x'
+    port = 8080
+
+
+    deployable {
+        context = 'SpringMVC'
+    }
+
+    remote {
+        hostname = 'localhost'
+        username =  'tomcat'
+        password =  'tomcat'
+    }
+}

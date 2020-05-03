@@ -1,0 +1,41 @@
+mixin modal_dialog
+
+    div#suggestMessagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                div.modal-body
+                div.modal-footer
+                    button#continueBtn.btn.btn-info= _.i18n('modal.button.continue')
+                    button#cancelBtn.btn.btn-default.pull-left(type="button", data-dismiss="modal")= _.i18n('modal.button.cancel')
+
+script(type='text/javascript').
+        var infoHeader = '#{_.i18n("modal.header.information")}';
+        var errorHeader = '#{_.i18n("modal.header.error")}';
+
+        var suggestModal = function (content, isError, okCallback, cancelCallback) {
+            var modal = $('#suggestMessagesModal');
+            var header = isError ? errorHeader : infoHeader;
+
+            modal.find('.modal-header').html('<h3>' + header + '</h3>');
+            modal.find('.modal-body').html(content);
+
+            modal.find('#continueBtn').click(function () {
+                if (okCallback) {
+                    okCallback();
+                } else {
+                    modal.modal('hide');
+                }
+            });
+
+            modal.find('#cancelBtn').click(function () {
+                if (cancelCallback) {
+                    cancelCallback();
+                } else {
+                    modal.modal('hide');
+                }
+            });
+
+            modal.modal('show');
+        }

@@ -1,0 +1,256 @@
+extends ../../layout_logged_in
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        if(isEdit)
+            h1= _.i18n('warehouse.item.edit.title')
+            div.controls
+                a.btn.btn-primary(onclick="submitEditWarehouseItem();")= _.i18n('warehouse.item.apply.button')
+                button.btn.btn-danger(type="button", data-toggle="modal", data-target="#deleteModal")=_.i18n('warehouse.item.remove.item')
+                a.btn.btn-default(href="/warehouse/")= _.i18n('warehouse.item.cancel.button')
+        else
+            h1= _.i18n('warehouse.item.add.title')
+            div.controls
+                a.btn.btn-primary(onclick="submitCreateWarehouseItem();")= _.i18n('warehouse.item.add.button')
+                button#importWarehouseItemsBtn.btn.btn-info(onclick="$('#importWarehouseItemsFile').click(); return false;")
+                    span#importWarehouseItemsBtnSpinner.fa.fa-spinner.fa-spin.hide
+                    span#importWarehouseItemsBtnError.fa.fa-exclamation-triangle.text-red.hide
+                    = _.i18n('warehouse.batch.upload.button')
+                a.btn.btn-default(href="/warehouse/")= _.i18n('warehouse.item.cancel.button')
+
+    //- Main content
+    section.content
+        - showAdditionalInfo = warehouseCreateItem.itemCreate || isEdit;
+        form#warehouseItemEditForm(role="form", method="post")
+            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('warehouse.item.base.info')
+                        div.box-body
+                            div.row
+                                div.col-md-6
+                                    div.form-group
+                                        label(for='articleNumber')= _.i18n('warehouse.item.edit.article.id')
+                                        input#articleNumber.form-control(name="articleNumber", value=warehouseCreateItem.articleNumber)
+                                if(isEdit)
+                                    div.col-md-2
+                                        div.form-group
+                                            label(for='warehouseAmount')= _.i18n('warehouse.item.edit.article.amount')
+                                            input#warehouseAmount.form-control(name="warehouseAmount", value=warehouseCreateItem.warehouseAmount)
+                                else
+                                    div.col-md-2
+                                        div.form-group
+                                            label(for='warehouseAmount')= _.i18n('warehouse.item.edit.article.amount.add')
+                                            input#warehouseAmount.form-control(name="warehouseAmount", value=warehouseCreateItem.warehouseAmount)
+                                    div.col-md-4
+                                        label= _.i18n('warehouse.item.toggle.update.action')
+                                            ul.list-inline
+                                                li
+                                                    input.warehouseItemRadio(type="radio", name="itemCreate", value="false", checked=warehouseCreateItem.itemCreate==false)
+                                                    label
+                                                        span(style="margin-left: 10px;")= _.i18n('warehouse.item.toggle.update.item')
+                                                li(style="margin-left: 15px;")
+                                                    input.warehouseItemRadio(type="radio", name="itemCreate", value="true", checked=warehouseCreateItem.itemCreate)
+                                                    label
+                                                        span(style="margin-left: 10px;")= _.i18n('warehouse.item.toggle.new.item')
+
+            div#additionalInfo.row(style=showAdditionalInfo?"":"display: none;")
+                div.col-md-3
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('warehouse.item.additional.info')
+                        div.box-body
+                            div.form-group
+                                label(for='articleName')= _.i18n('warehouse.item.edit.article.name')
+                                input#articleName.form-control(name="articleName", value=warehouseCreateItem.articleName)
+                            div.form-group
+                                label(for='supplierName')= _.i18n('warehouse.item.edit.supplier.name')
+                                select#supplierName.form-control(name="supplierName", value=warehouseCreateItem.supplierName)
+                                    each supplier in suppliers
+                                        - isSelected = supplier == warehouseCreateItem.supplierName ? 'selected' : undefined
+                                        option(value=supplier, selected=isSelected)= supplier
+                            div.form-group
+                                label(for='minimalWarehouseAmount')= _.i18n('warehouse.item.edit.minimal.amount')
+                                input#minimalWarehouseAmount.form-control(name="minimalWarehouseAmount", value=warehouseCreateItem.minimalWarehouseAmount)
+                            div.row
+                                div.col-md-6
+                                    div.form-group
+                                        label(for='warehouseRack')= _.i18n('warehouse.item.edit.rack')
+                                        input#warehouseRack.form-control(name="warehouseRack", value=warehouseCreateItem.warehouseRack)
+                                div.col-md-6
+                                    label= _.i18n('warehouse.item.edit.ebay.plus')
+                                    ul.list-inline
+                                        li
+                                            input.isEbayPlusRadio(type="radio", name="ebayPlus", value="true", checked=warehouseCreateItem.ebayPlus)
+                                            label
+                                                span(style="margin-left: 10px;")= _.i18n('warehouse.item.edit.ebay.plus.yes')
+                                        li(style="margin-left: 30px;")
+                                            input.isEbayPlusRadio(type="radio", name="ebayPlus", value="false", checked=warehouseCreateItem.ebayPlus == 'false')
+                                            label
+                                                span(style="margin-left: 10px;")= _.i18n('warehouse.item.edit.ebay.plus.no')
+                div.col-md-5
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('warehouse.item.cross_references')
+                        if (warehouseCreateItem.crossReferences && !warehouseCreateItem.crossReferences.isEmpty())
+                            div.box-body
+                                div.table-responsive
+                                    table.table.table-bordered.table-striped(role='grid')
+                                        thead
+                                            tr
+                                                th.col-xs-3= _.i18n('warehouse.item.cross_references.article_number')
+                                                th.col-xs-2= _.i18n('warehouse.item.cross_references.supplier')
+                                                th.col-xs-2= _.i18n('warehouse.item.cross_references.supplier_price')
+                                                th.col-xs-3= _.i18n('warehouse.item.cross_references.supplier_price_date')
+                                                th.col-xs-1= _.i18n('warehouse.item.cross_references.warehouse_amount')
+                                                th.col-xs-1= _.i18n('warehouse.item.cross_references.supplier_amount')
+                                        tbody
+                                            for reference in warehouseCreateItem.crossReferences
+                                                tr
+                                                    td
+                                                        if (reference.assignedInWarehouse)
+                                                            a(href='/warehouse/edit?articleNumber=' + reference.articleNumber)= reference.articleNumber
+                                                        else
+                                                            =reference.articleNumber
+                                                    td= reference.supplier
+                                                    td= reference.price
+                                                    td= reference.priceDate
+                                                    td= reference.warehouseAmount
+                                                    td= reference.supplierAmount
+
+                div.col-md-2
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('warehouse.item.reservations')
+                        if (warehouseCreateItem.reservations && !warehouseCreateItem.reservations.isEmpty())
+                            div.box-body
+                                div.table-responsive
+                                    table.table.table-bordered.table-striped(role='grid')
+                                        thead
+                                            tr
+                                                th= _.i18n('warehouse.item.reservations.header.sales_number')
+                                                th= _.i18n('warehouse.item.reservations.header.amount')
+                                        tbody
+                                            for reservation in warehouseCreateItem.reservations
+                                                tr
+                                                    td
+                                                        a(href='/orders/edit?id=' + reservation.orderId)= reservation.salesRecordNumber
+                                                    td= reservation.amount
+                div.col-md-2
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('warehouse.item.size.info')
+                        div.box-body
+                            div.form-group
+                                label(for='width')= _.i18n('warehouse.item.edit.width')
+                                input#width.form-control(name="width", value=warehouseCreateItem.width, disabled)
+                            div.form-group
+                                label(for='height')= _.i18n('warehouse.item.edit.height')
+                                input#height.form-control(name="height", value=warehouseCreateItem.height, disabled)
+                            div.form-group
+                                label(for='length')= _.i18n('warehouse.item.edit.length')
+                                input#length.form-control(name="length", value=warehouseCreateItem.length, disabled)
+                            div.form-group
+                                label(for='weight')= _.i18n('warehouse.item.edit.weight')
+                                input#weight.form-control(name="weight", value=warehouseCreateItem.weight, disabled)
+
+            if (isEdit)
+                div.row
+                    div.col-md-12
+                        div.box.box-primary
+                            div.box-header
+                                h3.box-title= _.i18n('warehouse.item.service.info')
+                            div.box-body
+                                div.row
+                                    div.col-md-6
+                                        div.form-group
+                                            label(for='realArticleNumber')= _.i18n('warehouse.item.edit.item.real.article')
+                                            input#realArticleNumber.form-control(name="realArticleNumber", value=warehouseCreateItem.realArticleNumber, disabled)
+                                        div.form-group
+                                            label(for='supplierAmount')= _.i18n('warehouse.item.edit.supplier.amount')
+                                            input#supplierAmount.form-control(name="supplierAmount", value=warehouseCreateItem.supplierAmount)
+                                        div.form-group
+                                            label(for='sendBackToSupplier')= _.i18n('warehouse.item.edit.send.back')
+                                            ul.list-inline
+                                                li
+                                                    input(type="radio", name="sendBackToSupplier", value="true", checked=warehouseCreateItem.sendBackToSupplier)
+                                                    label
+                                                        span(style="margin-left: 10px;")= _.i18n('warehouse.item.edit.ebay.plus.yes')
+                                                li(style="margin-left: 30px;")
+                                                    input(type="radio", name="sendBackToSupplier", value="false", checked=warehouseCreateItem.sendBackToSupplier == false)
+                                                    label
+                                                        span(style="margin-left: 10px;")= _.i18n('warehouse.item.edit.ebay.plus.no')
+                                    div.col-md-6
+                                        div.form-group
+                                            label(for='supplierLastUpdate')= _.i18n('warehouse.item.edit.supplier.update')
+                                            div.input-group
+                                                div.input-group-addon
+                                                    i.fa.fa-clock-o
+                                                input#supplierLastUpdate.form-control.datepicker(value='#{ _.fmt.date(warehouseCreateItem.supplierLastUpdate) }', name="supplierLastUpdate", data-date-format="DD.MM.YYYY", type='text')
+                                        div.form-group
+                                            label(for='supplierLastOrderDate')= _.i18n('warehouse.item.edit.supplier.last.order')
+                                            div.input-group
+                                                div.input-group-addon
+                                                    i.fa.fa-clock-o
+                                                input#supplierLastOrderDate.form-control.datepicker(value='#{ _.fmt.date(warehouseCreateItem.supplierLastOrderDate) }', name="supplierLastOrderDate", data-date-format="DD.MM.YYYY", type='text')
+                                        div.form-group
+                                            label(for='plannedIncomeDate')= _.i18n('warehouse.item.edit.planned.income')
+                                            div.input-group
+                                                div.input-group-addon
+                                                    i.fa.fa-clock-o
+                                                input#plannedIncomeDate.form-control.datepicker(value='#{ _.fmt.date(warehouseCreateItem.plannedIncomeDate) }', name="plannedIncomeDate", data-date-format="DD.MM.YYYY", type='text', disabled)
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('warehouse.item.create.errors')
+                div.modal-body
+                    ul
+                        if (messages)
+                            for message in messages
+                                li= _.i18n(message)
+
+    div#uploadModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('warehouse.item.upload.result')
+                div.modal-body
+                div.modal-footer
+                    a.btn.btn-primary.pull-right(href='/warehouse')= _.i18n('warehouse.item.create.button.apply')
+
+    div#deleteModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('warehouse.item.create.remove.title')
+                div.modal-body
+                    h4= _.i18n('warehouse.item.create.remove.text')
+                div.modal-footer
+                    a.btn.btn-primary.pull-left(href='/warehouse/delete?articleNumber=' + warehouseCreateItem.articleNumber)= _.i18n('warehouse.item.create.button.apply')
+                    button.btn.btn-default.pull-right(type='button', data-dismiss='modal')= _.i18n('warehouse.item.create.button.cancel')
+
+    form#importWarehouseItemsForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importWarehouseItemsFile(type="file", name="file", accept=".csv", onchange="uploadWarehouseItemsFile();")
+
+block page_scripts
+    script(src="/js/warehouse.js", type="text/javascript")
+    script(type="text/javascript").
+        var articlesNotFoundMessageHeader = '#{ _.i18n("warehouse.articles.not.found") }';
+        var successfullyUploadedMessage = '#{ _.i18n("warehouse.articles.upload.success") }';
+        var duplicatesMessage = '#{ _.i18n("warehouse.articles.upload.duplicates") }';
+
+        var warehouseAmountText = '#{_.i18n("warehouse.item.edit.article.amount") }';
+        var addToWarehouseAmountText = '#{_.i18n("warehouse.item.edit.article.amount.add") }';
+
+    if (messages)
+        script(type="text/javascript").
+            $('#messagesModal').modal('show');
+

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f56fe43c-38e8-4276-b9ab-702dda163711" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1Vpw5R1x3C7hBHzTuPewsASYc7G" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="aws" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f56fe43c-38e8-4276-b9ab-702dda163711" name="Default Changelist" comment="" />
+      <created>1577963160476</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1577963160476</updated>
+      <workItem from="1577963163355" duration="15398000" />
+      <workItem from="1577984350191" duration="993000" />
+      <workItem from="1577986087581" duration="3093000" />
+      <workItem from="1578047352832" duration="16000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="320" y="127" key="#Deployment" timestamp="1577986166158">
+      <screen x="0" y="23" width="1440" height="815" />
+    </state>
+    <state x="320" y="115" key="#Deployment/0.0.1440.900@0.0.1440.900" timestamp="1577966949510" />
+    <state x="320" y="127" key="#Deployment/0.23.1440.815@0.23.1440.815" timestamp="1577986166158" />
+    <state x="320" y="115" key="#Project_Structure" timestamp="1577979394414">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="320" y="115" key="#Project_Structure/0.0.1440.900/72.-1024.1280.1024@0.0.1440.900" timestamp="1577979394414" />
+    <state x="461" y="293" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1577976979731">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="461" y="293" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1440.900@0.0.1440.900" timestamp="1577976979731" />
+    <state x="457" y="240" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1577979390660">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="457" y="240" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1440.900/72.-1024.1280.1024@0.0.1440.900" timestamp="1577979390660" />
+    <state x="208" y="23" key="SettingsEditor" timestamp="1577978813324">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="208" y="23" key="SettingsEditor/0.0.1440.900/72.-1024.1280.1024@0.0.1440.900" timestamp="1577978813324" />
+    <state x="560" y="345" key="WebDeployment.AddServerDialog.v.1" timestamp="1577984372403">
+      <screen x="0" y="23" width="1440" height="815" />
+    </state>
+    <state x="560" y="356" key="WebDeployment.AddServerDialog.v.1/0.0.1440.900@0.0.1440.900" timestamp="1577966915475" />
+    <state x="560" y="345" key="WebDeployment.AddServerDialog.v.1/0.23.1440.815@0.23.1440.815" timestamp="1577984372403" />
+    <state x="397" y="263" key="com.intellij.ide.util.TipDialog" timestamp="1577986086806">
+      <screen x="0" y="23" width="1440" height="815" />
+    </state>
+    <state x="397" y="263" key="com.intellij.ide.util.TipDialog/0.23.1440.815@0.23.1440.815" timestamp="1577986086805" />
+    <state x="378" y="212" width="683" height="476" key="find.popup" timestamp="1577977083561">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="378" y="212" width="683" height="476" key="find.popup/0.0.1440.900/72.-1024.1280.1024@0.0.1440.900" timestamp="1577965597574" />
+    <state x="378" y="212" width="683" height="476" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1577977083561" />
+    <state x="383" y="199" width="672" height="614" key="search.everywhere.popup" timestamp="1577986106031">
+      <screen x="0" y="23" width="1440" height="815" />
+    </state>
+    <state x="383" y="194" width="672" height="678" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1577966732676" />
+    <state x="383" y="199" width="672" height="614" key="search.everywhere.popup/0.23.1440.815@0.23.1440.815" timestamp="1577986106031" />
+  </component>
+</project>

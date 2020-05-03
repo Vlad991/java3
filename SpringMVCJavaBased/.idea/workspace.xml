@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="70483ce5-7d69-41d4-a305-a0b0a65ea737" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeStyleSettingsInfer">
+    <option name="done" value="true" />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="testRunner" value="GRADLE" />
+    <option name="delegatedBuild" value="true" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="LogFilters">
+    <option name="FILTER_ERRORS" value="false" />
+    <option name="FILTER_WARNINGS" value="false" />
+    <option name="FILTER_INFO" value="true" />
+    <option name="FILTER_DEBUG" value="true" />
+    <option name="CUSTOM_FILTER" />
+  </component>
+  <component name="ProjectCodeStyleSettingsMigration">
+    <option name="version" value="1" />
+  </component>
+  <component name="ProjectId" id="1Wy3uyE2N8F8ZaaR2jJxJlQw0ER" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="showMembers" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="reference.projectsettings.compiler.annotationProcessors" />
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="70483ce5-7d69-41d4-a305-a0b0a65ea737" name="Default Changelist" comment="" />
+      <created>1560077815552</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1560077815552</updated>
+      <workItem from="1560077817421" duration="2005000" />
+      <workItem from="1560225079867" duration="115000" />
+      <workItem from="1560246996494" duration="19000" />
+      <workItem from="1560688098410" duration="1383000" />
+      <workItem from="1560695582134" duration="33000" />
+      <workItem from="1560699145657" duration="395000" />
+      <workItem from="1560778672189" duration="4000" />
+      <workItem from="1561987190128" duration="171000" />
+      <workItem from="1562051973940" duration="164000" />
+      <workItem from="1562762370957" duration="6702000" />
+      <workItem from="1562924525965" duration="58000" />
+      <workItem from="1562924712255" duration="1235000" />
+      <workItem from="1562930338343" duration="153000" />
+      <workItem from="1562932245184" duration="2332000" />
+      <workItem from="1562940558849" duration="120000" />
+      <workItem from="1562947585173" duration="3215000" />
+      <workItem from="1563292947695" duration="625000" />
+      <workItem from="1563298724429" duration="596000" />
+      <workItem from="1563355763599" duration="860000" />
+      <workItem from="1563388937282" duration="63000" />
+      <workItem from="1563441058774" duration="7000" />
+      <workItem from="1580108236413" duration="1627000" />
+      <workItem from="1580127165905" duration="1504000" />
+      <workItem from="1580148898400" duration="648000" />
+      <workItem from="1580149883788" duration="1327000" />
+      <workItem from="1580195965962" duration="598000" />
+      <workItem from="1580209266502" duration="249000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="397" y="262" key="com.intellij.ide.util.TipDialog" timestamp="1580196060786">
+      <screen x="0" y="23" width="1440" height="813" />
+    </state>
+    <state x="397" y="262" key="com.intellij.ide.util.TipDialog/0.23.1440.813/72.-1001.1280.1001@0.23.1440.813" timestamp="1580196060786" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

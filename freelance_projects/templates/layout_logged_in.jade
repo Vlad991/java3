@@ -1,0 +1,123 @@
+extends ./layout.jade
+
+block vars
+    - body_class = "skin-blue"
+
+block content
+
+    //- header logo: style can be found in header.less
+    header.header
+        //- Add the class icon to your logo image or logo icon to add the margining
+        a.logo(href="/") Reindeer
+        //- Header Navbar: style can be found in header.less
+        nav.navbar.navbar-static-top(role="navigation")
+            //- Sidebar toggle button
+            a.navbar-btn.sidebar-toggle(href="#", data-toggle="offcanvas", role="button")
+                span.sr-only #{_.i18n('sidebar.navigation.toggle')}
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+            div.navbar-right
+                ul.nav.navbar-nav
+                    //- User Account: style can be found in dropdown.less
+                    li.user.user-menu
+                        a(href="/logout", onclick="$('#logout_form').submit(); return false;")
+                            i.glyphicon.glyphicon-user
+                            span(style="padding-right: 10px;") #{_username}
+                            i.fa.fa-sign-out
+                        form#logout_form(action="/logout", method="post")
+                            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+
+    div.wrapper.row-offcanvas.row-offcanvas-left
+        //- Left side column. contains the logo and sidebar
+        aside.left-side.sidebar-offcanvas
+            //- sidebar: style can be found in sidebar.less
+            section.sidebar
+                //- logo
+                div(style="width: 220px; height: 133px;")
+                    a.logo(href="/")
+                        img(src="/img/logo_img.png", alt="Reindeer")
+                //- sidebar menu: : style can be found in sidebar.less
+                ul.sidebar-menu
+                    li.treeview(class="#{_sidebar.isActiveTab('orders') ? 'active' : ''}")
+                        a(href="#")
+                            i.fa.fa-shopping-cart
+                            span #{_.i18n('sidebar.category.orders')}
+                            i.fa.fa-angle-left.pull-right
+                        ul.treeview-menu
+                            li(class="#{_sidebar.isActiveLink('orders/list') ? 'active' : ''}")
+                                a(href="/orders")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.all')}
+                            li(class="#{_sidebar.isActiveLink('orders/warning') ? 'active' : ''}")
+                                a(href="/orders/warning")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.warning')}
+                                    if _ordersWithWarningCount > 0
+                                        small.badge.pull-right.bg-red= _ordersWithWarningCount
+                            li(class="#{_sidebar.isActiveLink('orders/drafts') ? 'active' : ''}")
+                                a(href="/drafts")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.drafts')}
+                            li(class="#{_sidebar.isActiveLink('orders/create') ? 'active' : ''}")
+                                a(href="/orders/create")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.create')}
+                            li(class="#{_sidebar.isActiveLink('deficit') ? 'active' : ''}")
+                                a(href="/deficit")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.deficit')}
+                            li(class="#{_sidebar.isActiveLink('delivery') ? 'active' : ''}")
+                                a(href="/delivery")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.orders.delivery')}
+                    li.treeview(class="#{_sidebar.isActiveTab('accounting') ? 'active' : ''}")
+                        a(href="#")
+                            i.fa.fa-money
+                            span #{_.i18n('sidebar.category.accounting')}
+                            i.fa.fa-angle-left.pull-right
+                        ul.treeview-menu
+                            li(class="#{_sidebar.isActiveLink('accounting/invoices') ? 'active' : ''}")
+                                a(href="/accounting/invoices")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.invoices')}
+                            li(class="#{_sidebar.isActiveLink('accounting/inbound') ? 'active' : ''}")
+                                a(href="/accounting/inbound")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.accounting.inbound')}
+                            li(class="#{_sidebar.isActiveLink('accounting/report') ? 'active' : ''}")
+                                a(href="/accounting/reports")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.accounting.reports')}
+                            li(class="#{_sidebar.isActiveLink('transactions') ? 'active' : ''}")
+                                a(href="/transactions")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.transactions')}
+                    li.treeview(class="#{_sidebar.isActiveTab('warehouse') ? 'active' : ''}")
+                        a(href="#")
+                            i.fa.fa-archive
+                            span #{_.i18n('sidebar.category.warehouse')}
+                            i.fa.fa-angle-left.pull-right
+                        ul.treeview-menu
+                            li(class="#{_sidebar.isActiveTab('warehouse') ? 'active' : ''}")
+                                a(href="/warehouse")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.warehouse_items')}
+                            li(class="#{_sidebar.isActiveTab('warehouse') ? 'active' : ''}")
+                                a(href="/warehouse/cross_references")
+                                    i.fa.fa-angle-double-right
+                                    | #{_.i18n('sidebar.category.warehouse_cross_references')}
+
+                    li(class="#{_sidebar.isActiveTab('jobs') ? 'active' : ''}")
+                        a(href="/jobs")
+                            i.fa.fa-refresh
+                            | #{_.i18n('sidebar.category.jobs')}
+                    if _.isAdmin()
+                        li(class="#{_sidebar.isActiveTab('users') ? 'active' : ''}")
+                            a(href="/users")
+                                i.fa.fa-user
+                                | #{_.i18n('sidebar.category.users')}
+
+        //- Right side column. Contains the navbar and content of the page
+        aside.right-side
+            block content_logged_id

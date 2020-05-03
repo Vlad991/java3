@@ -1,0 +1,34 @@
+extends ../layout_logged_in
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('jobs.list.title')
+    //- Main content
+    section.content
+
+        div.row: div.col-md-12: div.box.box-primary
+            div.box-body
+                div.table-responsive: table.table.table-bordered.table-hover.table-striped(role='grid')
+                    thead
+                        tr
+                            th= _.i18n('jobs.table.name')
+                            th= _.i18n('jobs.table.last_execution')
+                            th= _.i18n('jobs.table.last_successful_execution')
+                            th= _.i18n('jobs.table.last_was_successful')
+                            th
+                    tbody
+                        each job in jobs
+                            tr
+                                td= job.jobState.name
+                                td= _.fmt.time(job.jobState.lastExecution)
+                                td= _.fmt.time(job.jobState.lastSuccessfulExecution)
+                                td
+                                    if (job.jobState.lastWasSuccessful)
+                                        | +
+                                    else
+                                        | -
+                                td
+                                    if (job.isEnabled)
+                                        a.btn.btn-xs.btn-primary(href="/jobs/trigger?id=#{job.jobState.id}")= _.i18n('jobs.table.trigger')
+                                    else
+                                        = _.i18n('jobs.table.disabled')

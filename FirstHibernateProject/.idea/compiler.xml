@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="HibernateSource.main" target="1.8" />
+      <module name="HibernateSource.test" target="1.8" />
+      <module name="Se.main" target="1.8" />
+      <module name="Se.test" target="1.8" />
+      <module name="Session.main" target="1.8" />
+      <module name="Session.test" target="1.8" />
+      <module name="Session_hi.main" target="1.8" />
+      <module name="Session_hi.test" target="1.8" />
+      <module name="Session_Hibernate.main" target="1.8" />
+      <module name="Session_Hibernate.test" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

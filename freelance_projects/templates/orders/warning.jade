@@ -1,0 +1,19 @@
+extends ../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('orders.warning.title')}
+
+    //- Main content
+    section.content
+        div.row
+            div.col-xs-12
+                div.box
+                    div.box-body
+                        - ordersTable = { 'id': 'ordersTable', 'showAssignee': true, 'orders': orders }
+                        - tableData = { 'id': 'ordersTable', 'columnDefs': '[{ type: "de_datetime", targets: 0 }, { type: "de_datetime", targets: 7 }, { type: "de_datetime", targets: 8 }]' }
+                        include ../components/orders/table
+
+block page_scripts
+    include ../components/table_scripts

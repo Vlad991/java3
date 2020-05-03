@@ -1,0 +1,269 @@
+extends ../layout_logged_in
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        if (isDraft)
+            h1= _.i18n('orders.draft.title')
+        else if (isAdvancedEdit)
+            h1= _.i18n('orders.advanced_edit.title')
+        else
+            h1= _.i18n('orders.create.title')
+        div.controls
+            if (isAdvancedEdit)
+                button.btn.btn-primary(onclick="resetDirty(); submitAdvancedEditOrder();")= _.i18n('orders.advanced_edit.save_button')
+                a.btn.btn-default(href="/orders/edit?id=#{order.id}", onclick="resetDirty();")= _.i18n('orders.advanced_edit.back_button')
+            else
+                button.btn.btn-primary(onclick="submitCreateOrder();")= _.i18n('orders.create.button')
+                button.btn.btn-default(onclick="submitSaveDraft();")= _.i18n('orders.save_draft.button')
+    //- Main content
+    section.content
+        - items = order.items;
+        - customer = order.customer;
+        - deliveryAddress = order.deliveryAddress;
+        - billingAddress = order.billingAddress;
+        form#orderEditForm(role="form", method="post")
+            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            if (isDraft)
+                input(type="hidden", name="draftId", value=order.id)
+            if (isAdvancedEdit)
+                input(type="hidden", name="advancedEditIdId", value=order.id)
+            div.row
+                div.col-md-6
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.order_info')
+                        div.box-body
+                            div.form-group
+                                label(for='externalReferenceId')= _.i18n('orders.edit.order_info.id')
+                                input#externalReferenceId.form-control(name="externalReferenceId", value=order.externalReference)
+                            div.form-group
+                                label(for='source')= _.i18n('orders.edit.order_info.source')
+                                input#source.form-control(name="source", value=order.source.info)
+                            div.form-group
+                                label(for='paymentDetails')= _.i18n('orders.edit.order_info.payment_details')
+                                input#paymentDetails.form-control(name="paymentDetails", value=order.paymentDetails)
+                            div.form-group
+                                label(for='deliveryService')= _.i18n('orders.edit.order_info.delivery_service')
+                                input#deliveryService.form-control(name="deliveryService", value=order.deliveryService)
+                            div.form-group.table-responsive
+                                table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                                    tr
+                                        td
+                                            b= _.i18n('orders.edit.order_info.delivery_price_amount_netto')
+                                            span.text-red *
+                                        td
+                                            input#deliveryPriceNettoAmount.form-control(name="deliveryPriceNettoAmount", value=_.fmt.money(order.deliveryPriceNettoAmount))
+                                        td(style="padding-left: 20px;")
+                                            b= _.i18n('orders.edit.order_info.delivery_vat_percentage')
+                                            span.text-red *
+                                        td
+                                            input#deliveryPriceVatPercentage.form-control(name="deliveryPriceVatPercentage", value=_.fmt.number(order.deliveryPriceVatPercentage))
+
+                                    tr
+                                        td
+                                            b= _.i18n('orders.edit.order_info.payment_processing_fee_netto')
+                                            span.text-red *
+                                        td
+                                            input#paymentProcessingFeeNettoAmount.form-control(name="paymentProcessingFeeNettoAmount", value=_.fmt.money(order.paymentProcessingFeeNettoAmount))
+                                        td(style="padding-left: 20px;")
+                                            b= _.i18n('orders.edit.order_info.payment_processing_fee_vat_percentage')
+                                            span.text-red *
+                                        td
+                                            input#paymentProcessingFeeVatPercentage.form-control(name="paymentProcessingFeeVatPercentage", value=_.fmt.number(order.paymentProcessingFeeVatPercentage))
+
+                                    tr
+                                        td
+                                            b= _.i18n('orders.edit.order_info.discount_amount')
+                                            span.text-red *
+                                        td
+                                            input#discountAmount.form-control(name="discountAmount", value=_.fmt.money(order.discountAmount))
+                                        td(style="padding-left: 20px;")
+                                            b= _.i18n('orders.edit.order_info.vat_percentage')
+                                            span.text-red *
+                                        td
+                                            input#vatPercentage.form-control(name="vatPercentage", value=_.fmt.number(order.vatPercentage))
+                                    tr
+                                        td
+                                            b= _.i18n('orders.edit.order_info.currency')
+                                            span.text-red *
+                                        td
+                                            input#orderCurrency.form-control(name="orderCurrency", value=order.currency)
+                                        td
+                                        td
+
+
+                div.col-md-6
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.customer_info')
+                        div.box-body
+                            div.form-group
+                                label(for='customerName')= _.i18n('orders.edit.customer_info.name')
+                                input#customerName.form-control(name="customerName", value=customer.name)
+                            div.form-group
+                                label(for='customerAlias')= _.i18n('orders.edit.customer_info.alias')
+                                input#customerAlias.form-control(name="customerAlias", value=customer.alias)
+                            div.form-group
+                                label(for='customerEmail')= _.i18n('orders.edit.customer_info.email')
+                                input#customerEmail.form-control(name="customerEmail", value=customer.email)
+                            div.form-group
+                                label(for='customerPhone')= _.i18n('orders.edit.customer_info.phone_number')
+                                input#customerPhone.form-control(name="customerPhone", value=customer.phoneNumber)
+                            div.form-group
+                                label(for='customerVatNumber')= _.i18n('orders.edit.customer_info.vat_number')
+                                input#customerVatNumber.form-control(name="customerVatNumber", value=customer.vatNumber)
+                            div.form-group
+                                label(for='customerComment')= _.i18n('orders.edit.customer_info.comment')
+                                textarea#customerComment.form-control(name="customerComment", rows=5)=order.customerComment
+
+            div.row
+                div.col-md-12
+                    - comments = order.getSortedComments();
+                    include ../components/comments
+                    +comments(comments, 'order')
+
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.items')
+                            div.controls
+                                button.btn.btn-default(onclick="addNewItemsLine(); return false;")= _.i18n('items.table.action.add')
+                                button.btn.btn-default(onclick="ItemsSuggestionModal.show('items_suggestion_modal', 'itemsSuggestionModalCallback'); return false;")= _.i18n('items.table.action.add_from_list')
+                                button#importItemsBtn.btn.btn-default(onclick="$('#importItemsFile').click(); return false;")
+                                    span#importItemsBtnSpinner.fa.fa-spinner.fa-spin.hide
+                                    span#importItemsBtnError.fa.fa-exclamation-triangle.text-red.hide
+                                    = ' ' + _.i18n('items.table.action.add_from_file')
+                        div.box-body
+                            div.table-responsive
+                                table#itemsTable.table.table-bordered.table-striped(role='grid')
+                                    thead
+                                        tr
+                                            th= _.i18n('items.table.name')
+                                                span.text-red *
+                                            th= _.i18n('items.table.article_number')
+                                                span.text-red *
+                                            th= _.i18n('items.table.amount')
+                                                span.text-red *
+                                            th= _.i18n('items.table.price_netto')
+                                                span.text-red *
+                                            th= _.i18n('items.table.discount_percentage')
+                                                span.text-red *
+                                            th= _.i18n('items.table.reference_oe')
+                                            th= _.i18n('items.table.reference_oem')
+                                            th= _.i18n('items.table.reference_other')
+                                            th= _.i18n('items.table.processing_days.long')
+                                            th
+                                    tbody
+                                        for item in items
+                                            tr
+                                                td
+                                                    if (isDraft || isAdvancedEdit)
+                                                        input.form-control(type="hidden", name="itemId", value=item.id)
+                                                    input.form-control(name="name", value=item.name)
+                                                td
+                                                    input.form-control(name="articleNumber", value=item.articleNumber)
+                                                td
+                                                    input.form-control(name="amount", value=item.amount)
+                                                td
+                                                    input.form-control(name="priceNettoAmount", value=_.fmt.money(item.priceNettoAmount))
+                                                td
+                                                    input.form-control(name="discountPercentage", value=_.fmt.number(item.discountPercentage))
+                                                td
+                                                    input.form-control(name="referenceNumberOE", value=item.referenceNumberOE)
+                                                td
+                                                    input.form-control(name="referenceNumberOEM", value=item.referenceNumberOEM)
+                                                td
+                                                    input.form-control(name="referenceNumberOther", value=item.referenceNumberOther)
+                                                td
+                                                    input.form-control(name="processingDays", value=item.state.processingDays)
+                                                td
+                                                    button.deleteLineBtn.btn.btn-danger
+                                                        i.fa.fa-minus
+                                        if (!items)
+                                            tr
+                                                td
+                                                    input.form-control(name="name")
+                                                td
+                                                    input.form-control(name="articleNumber")
+                                                td
+                                                    input.form-control(name="amount")
+                                                td
+                                                    input.form-control(name="priceNettoAmount")
+                                                td
+                                                    input.form-control(name="discountPercentage", value="0")
+                                                td
+                                                    input.form-control(name="referenceNumberOE")
+                                                td
+                                                    input.form-control(name="referenceNumberOEM")
+                                                td
+                                                    input.form-control(name="referenceNumberOther")
+                                                td
+                                                    input.form-control(name="processingDays")
+                                                td
+                                                    button.deleteLineBtn.btn.btn-danger
+                                                        i.fa.fa-minus
+
+            div.row
+                include ../components/address_form
+                - deliveryText = _.i18n('orders.edit.delivery_address')
+                - billingText  = _.i18n('orders.edit.billing_address')
+                div.col-md-6
+                    +address_form(deliveryText, deliveryAddress, 'delivery')
+                div.col-md-6
+                    +address_form(billingText, billingAddress, 'billing')
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('orders.create.errors')
+                div.modal-body
+                    ul
+                        if (messages)
+                            for message in messages
+                                li= _.i18n(message)
+
+    include ../components/items/items_suggestion_modal
+    +items_suggestion_modal('items_suggestion_modal')
+
+    form#importItemsForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importItemsFile(type="file", name="importItemsFile", accept=".csv", onchange="uploadItemsFile();")
+
+block page_scripts
+    script(src="/js/order_create.js", type="text/javascript")
+    include ../components/items/items_suggestion_modal_scripts
+    if (messages)
+        script(type="text/javascript").
+            $('#messagesModal').modal('show');
+    if (isAdvancedEdit)
+        script(type='text/javascript').
+
+            var isDirty = false;
+
+            $(function () {
+
+                $('.form-control').change(function () {
+
+                    if ($(this).hasClass('ignore-change')) return;
+
+                    $(this).addClass('changed');
+                    isDirty = true;
+
+                });
+
+                $(window).bind('beforeunload', function (e) {
+                    if (isDirty) {
+                        return "#{_.i18n('orders.edit.warning.unsaved')}";
+                    } else {
+                        return undefined;
+                    }
+                });
+
+                window.resetDirty = function () {
+                    isDirty = false;
+                };
+
+            });

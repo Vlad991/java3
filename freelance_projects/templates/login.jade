@@ -1,0 +1,24 @@
+extends ./layout.jade
+
+block vars
+    - body_class = "bg-black"
+
+block content
+    div#login-box.form-box
+        div.header #{_.i18n('login.form.caption')}
+        form(action="/login", method="post")
+            div.body.bg-gray
+                div.form-group
+                    input.form-control(type="text", name="username", placeholder="#{_.i18n('login.form.username')}")
+                div.form-group
+                    input.form-control(type="password", name="password", placeholder="#{_.i18n('login.form.password')}")
+                input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            div.footer
+                button.btn.bg-olive.btn-block(type="submit") #{_.i18n('login.form.submit')}
+            div
+                div.login-langs
+                    a(href="/login?lang=ru") RU
+                    span &bull;
+                    a(href="/login?lang=de") DE
+                    span &bull;
+                    a(href="/login?lang=en") EN

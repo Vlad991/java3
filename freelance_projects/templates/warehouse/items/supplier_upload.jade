@@ -1,0 +1,46 @@
+extends ../../layout_logged_in
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('warehouse.supplier.upload.title')
+        div.controls
+            select#importSupplierItemsSelect.form-control(name="importSupplierItemsSelect")
+                each supplier in suppliers
+                    option(value=supplier)= supplier
+            button#importSupplierItemsBtn.btn.btn-info(onclick="$('#importSupplierItemsFile').click(); return false;")
+                span#importSupplierItemsBtnSpinner.fa.fa-spinner.fa-spin.hide
+                span#importSupplierItemsBtnError.fa.fa-exclamation-triangle.text-red.hide
+                = _.i18n('warehouse.batch.upload.button')
+            a.btn.btn-default(href="/warehouse/")= _.i18n('warehouse.item.cancel.button')
+
+    //- Main content
+    section.content
+        div.row: div.col-md-12: div.box.box-primary
+            div.box-header
+                h3.box-title= _.i18n('warehouse.supplier.load.history')
+            div.box-body
+                div.table-responsive: table.table.table-bordered.table-hover.table-striped(role='grid')
+                    thead
+                        tr
+                            th= _.i18n('warehouse.supplier.history.file.name')
+                            th= _.i18n('warehouse.supplier.history.supplier')
+                            th= _.i18n('warehouse.supplier.history.upload.date')
+                            th= _.i18n('warehouse.supplier.history.status')
+                            th= _.i18n('warehouse.supplier.history.update.date')
+                            th= _.i18n('warehouse.supplier.history.uploaded.by')
+                    tbody
+                        each supplierItem in items
+                            tr
+                                td= supplierItem.fileName
+                                td= supplierItem.supplier
+                                td= _.fmt.time(supplierItem.uploadDate)
+                                td= supplierItem.status
+                                td= _.fmt.time(supplierItem.updateDate)
+                                td= supplierItem.uploadedBy
+
+    form#importSupplierItemsForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importSupplierItemsFile(type="file", name="file", accept=".csv", onchange="uploadSupplierItemsFile();")
+
+block page_scripts
+    script(src="/js/warehouse.js", type="text/javascript")

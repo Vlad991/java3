@@ -1,0 +1,286 @@
+extends ../../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('accounting.reports.index.title')
+        div.controls
+            button.btn.btn-success(onclick="showGenerationModal();")= _.i18n('accounting.reports.generate.new')
+    //- Main content
+    section.content
+        div.row: div.col-md-12: div.box.box-primary: div.box-body
+            form#filterForm(role="form", action="/accounting/reports/filter", method="post")
+                input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                div.row
+                    div.col-md-4: div.form-group
+                        label(for='generatedOn')= _.i18n('accounting.reports.filter.generation_time')
+                        div.input-group
+                            div.input-group-addon
+                                i.fa.fa-clock-o
+                            input#generatedOn.form-control.datepicker(name='generatedOn', value=_.fmt.date(generatedOn), data-date-format="DD.MM.YYYY", type='text')
+                    div.col-md-4: div.form-group
+                        label(for='fromDate')= _.i18n('accounting.reports.filter.from_date')
+                        div.input-group
+                            div.input-group-addon
+                                i.fa.fa-clock-o
+                            input#fromDate.form-control.datepicker(name='fromDate', value=_.fmt.date(fromDate), data-date-format="DD.MM.YYYY", type='text')
+                    div.col-md-4: div.form-group
+                        label(for='toDate')= _.i18n('accounting.reports.filter.to_date')
+                        div.input-group
+                            div.input-group-addon
+                                i.fa.fa-clock-o
+                            input#toDate.form-control.datepicker(name='toDate', value=_.fmt.date(toDate), data-date-format="DD.MM.YYYY", type='text')
+                div.row
+                    div.col-md-4: div.form-group.controls
+                        button.btn.btn-primary(onclick="$('#filterForm').submit();")= _.i18n('accounting.reports.filter.apply')
+                        a.btn.btn-default(href="/accounting/reports/reset_filter")= _.i18n('accounting.reports.filter.reset')
+
+        div.row: div.col-xs-12: div.box: div.box-body: div.table-responsive
+                table#accountingReportList.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                    thead: tr
+                        th= _.i18n('accounting.reports.table.generation_time')
+                        th= _.i18n('accounting.reports.table.type')
+                        th= _.i18n('accounting.reports.table.from_date')
+                        th= _.i18n('accounting.reports.table.to_date')
+                        th= _.i18n('accounting.reports.table.status')
+                        th= _.i18n('accounting.reports.table.file')
+                        th= _.i18n('accounting.reports.table.delete')
+
+    div#successSentModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('accounting.reports.generate.result.info')
+                div.modal-body
+                    h5= _.i18n('accounting.reports.generate.result.success')
+                div.modal-footer
+                    a.btn.btn-info(href="/accounting/reports")= _.i18n('accounting.reports.generate.result.continue')
+
+    div#errorModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('accounting.reports.errors.info')
+                div.modal-body
+
+
+    div#reportGenerationModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('accounting.reports.generate.new')
+                form#generateReportForm(role="form")
+                    input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                    div.modal-body
+                        div.row
+                            div.col-md-4: div.form-group
+                                label(for='generateReportFromDate')= _.i18n('accounting.reports.generate.from_date')
+                                div.input-group
+                                    div.input-group-addon
+                                        i.fa.fa-clock-o
+                                    input#generateReportFromDate.form-control.datepicker(name='generateReportFromDate', value=_.fmt.date(generateReportFromDate), data-date-format="DD.MM.YYYY", type='text')
+                            div.col-md-4: div.form-group
+                                label(for='generateReportToDate')= _.i18n('accounting.reports.generate.to_date')
+                                div.input-group
+                                    div.input-group-addon
+                                        i.fa.fa-clock-o
+                                    input#generateReportToDate.form-control.datepicker(name='generateReportToDate', value=_.fmt.date(generateReportToDate), data-date-format="DD.MM.YYYY", type='text')
+                            div.col-md-4: div.form-group
+                                label(for='reportType')= _.i18n('accounting.reports.generate.type')
+                                select#reportType.form-control(value=reportType, name="reportType")
+                                    each reportType in reportTypes
+                                        - isSelected = reportType == reportType ? 'selected' : undefined
+                                        option(value=reportType, selected=isSelected)= _.i18n('accounting.reports.generate.report_type.' + reportType)
+                    div.modal-footer
+                        button.btn.btn-success(onclick="submitReportGeneration();")= _.i18n('accounting.reports.generate.trigger')
+                        button.btn.btn-default.pull-left(type="button", data-dismiss="modal")= _.i18n('accounting.reports.generate.cancel')
+
+    div#deleteReportModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        input#form-token(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('accounting.reports.delete')
+                div.modal-body
+                    h5= _.i18n('accounting.reports.delete.question')
+                div.modal-footer
+                    button#delete-report-modal-btn.btn.btn-danger= _.i18n('accounting.reports.delete.proceed')
+                    button.btn.btn-default.pull-left(type="button", data-dismiss="modal")= _.i18n('accounting.reports.generate.cancel')
+
+block page_scripts
+    script(src="/js/reports.js", type="text/javascript")
+    script(type="text/javascript").
+        var language = '#{_.lang()}';
+        $(function () {
+            $('#status').multiselect({
+                buttonWidth: "100%",
+                nonSelectedText: "-",
+                numberDisplayed: 4,
+                nSelectedText: "#{ _.i18n('multiselect.nselected') }",
+                allSelectedText: "#{ _.i18n('multiselect.all_selected') }"
+            });
+
+            var getParameter = function (theParameter) {
+                var params = window.location.search.substr(1).split('&');
+                for (var i = 0; i < params.length; i++) {
+                    var p = params[i].split('=');
+                    if (p[0] == theParameter) {
+                        return decodeURIComponent(p[1]);
+                    }
+                }
+                return false;
+            };
+
+            var start = 0;
+            try {
+                var pageParam = parseInt(getParameter('page'));
+                if (!isNaN(pageParam)) {
+                    if (pageParam) start = pageParam * 30;
+                }
+            } catch (e) {
+            }
+
+            var table = $('#accountingReportList');
+
+            table.dataTable({
+                'serverSide': true,
+                'ajax': {
+                    'url': '/accounting/reports',
+                    'type': 'POST',
+                    'error': function () {
+                        $(
+                                '<div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">' +
+                                '  <i class="fa fa-ban"></i>' +
+                                '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                '  #{_.i18n("accounting.report.table.error.data")}' +
+                                '</div>'
+                        ).insertBefore($('div.table-responsive'));
+                    },
+                    'data': {
+                        "#{_.attr('_csrf').parameterName}": "#{_.attr('_csrf').token}"
+                    }
+                },
+                'dom': '<<"row"<"col-xs-6"><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+                'lengthChange': false,
+                'scrollX': true,
+                'displayStart': start,
+                'pageLength': 30,
+                'language': {
+                    'emptyTable': '#{ _.i18n("datatable.emptyTable") }',
+                    'info': '#{ _.i18n("datatable.info") }',
+                    'infoEmpty': '#{ _.i18n("datatable.infoEmpty") }',
+                    'infoFiltered': '#{ _.i18n("datatable.infoFiltered") }',
+                    'infoPostFix': '#{ _.i18n("datatable.infoPostFix") }',
+                    'thousands': '#{ _.i18n("datatable.thousands") }',
+                    'lengthMenu': '#{ _.i18n("datatable.lengthMenu") }',
+                    'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                    'processing': '#{ _.i18n("datatable.processing") }',
+                    'search': '#{ _.i18n("datatable.search") }',
+                    'zeroRecords': '#{ _.i18n("datatable.zeroRecords") }',
+                    'paginate': {
+                        'first': '#{ _.i18n("datatable.paginate.first") }',
+                        'last': '#{ _.i18n("datatable.paginate.last") }',
+                        'next': '#{ _.i18n("datatable.paginate.next") }',
+                        'previous': '#{ _.i18n("datatable.paginate.previous") }'
+                    },
+                    'aria': {
+                        'sortAscending': '#{ _.i18n("datatable.aria.sortAscending") }',
+                        'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                    }
+                },
+                'order': [0, 'desc'],
+                'columnDefs': [
+                    {
+                        'targets':0,
+                        'data': 'generationDate',
+                        'type': 'de_datetime'
+                    },
+                    {
+                        'targets':1,
+                        'data': null,
+                        'defaultContent': '',
+                        'className': 'text-center',
+                        'render': function (data) {
+                            switch (data.type) {
+                                case 'INBOUND':
+                                    return '#{_.i18n("accounting.reports.generate.report_type.INBOUND")}';
+                                case 'OUTBOUND':
+                                    return '#{_.i18n("accounting.reports.generate.report_type.OUTBOUND")}';
+                                case 'CREDIT_NOTE':
+                                    return '#{_.i18n("accounting.reports.generate.report_type.CREDIT_NOTE")}';
+                            }
+                        }
+                    },
+                    {
+                        'targets':2,
+                        'data': 'fromDate',
+                        'type': 'de_date'
+                    },
+                    {
+                        'targets':3,
+                        'data': 'toDate',
+                        'type': 'de_date'
+                    },
+                    {
+                        'targets':4,
+                        'data': null,
+                        'defaultContent': '',
+                        'className': 'text-center',
+                        'render': function (data) {
+                            switch (data.status) {
+                                case 'TRIGGERED':
+                                    return '#{_.i18n("accounting.reports.generate.report_status.TRIGGERED")}';
+                                case 'FAILED':
+                                    return '#{_.i18n("accounting.reports.generate.report_status.FAILED")}';
+                                case 'CANCELED':
+                                    return '#{_.i18n("accounting.reports.generate.report_status.CANCELED")}';
+                                case 'GENERATED':
+                                    return '#{_.i18n("accounting.reports.generate.report_status.GENERATED")}';
+                            }
+                        }
+                    },
+                    {
+                        'targets':5,
+                        'data': null,
+                        'defaultContent': '',
+                        'className': 'text-center',
+                        'orderable': false,
+                        'render': function (data) {
+                            if (data.status === 'GENERATED') {
+                                return '<a href="/accounting/reports/' + data.id + '"><span class="glyphicon glyphicon-save"></span></a>';
+                            }
+                        }
+                    },
+                    {
+                        'targets':6,
+                        'data': null,
+                        'defaultContent': '',
+                        'className': 'text-center',
+                        'orderable': false,
+                        'render': function (data) {
+                            return '<span class="glyphicon glyphicon-trash"></span>';
+                        }
+                    }
+                ],
+                'createdRow': function(row, data) {
+                    $(row).addClass(data['status']);
+                    try {
+                        $($(row).find('td').get(6)).click(function () {
+                            deleteReport(data['id']);
+                        });
+                    } catch (e) {
+                    }
+                }
+            });
+
+            table.on('page.dt', function () {
+                try {
+                    history.pushState({}, "", "/accounting/reports?page=" + table.DataTable().page());
+                } catch (e) {
+                }
+            });
+        });

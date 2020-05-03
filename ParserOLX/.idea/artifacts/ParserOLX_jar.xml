@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ParserOLX:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ParserOLX_jar</output-path>
+    <root id="archive" name="ParserOLX.jar">
+      <element id="module-output" name="ParserOLX" />
+    </root>
+  </artifact>
+</component>

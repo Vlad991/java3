@@ -1,0 +1,221 @@
+extends ../../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('warehouse.table.list.title')}
+        div.controls
+            button#importWarehouseItemsSizeBtn.btn.btn-info(onclick="$('#importWarehouseItemsSizeFile').click(); return false;")
+                span#importWarehouseItemsSizeBtnSpinner.fa.fa-spinner.fa-spin.hide
+                span#importWarehouseItemsSizeBtnError.fa.fa-exclamation-triangle.text-red.hide
+                = _.i18n('warehouse.batch.size.upload.button')
+            button#importWarehouseItemPricesBtn.btn.btn-info
+                span#importWarehouseItemPricesBtnSpinner.fa.fa-spinner.fa-spin.hide
+                span#importWarehouseItemPricesBtnError.fa.fa-exclamation-triangle.text-red.hide
+                = _.i18n('warehouse.batch.prices.upload.button')
+            a(href="/warehouse/supplier").btn.btn-primary= _.i18n('warehouse.supplier.update.button')
+            a(href="/warehouse/create").btn.btn-primary= _.i18n('warehouse.item.create.button')
+    //- Main content
+    section.content
+        div.row
+            div.col-xs-12
+                div.box.box-primary
+                    div.box-body
+                        form#filterForm(role="form", action="/warehouse/filter", method="post")
+                            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                            div.row
+                                div.col-md-6
+                                    div.form-group
+                                        input#searchToken.form-control(name='searchToken', value=searchToken, placeholder=_.i18n('warehouse.table.list.search'), type='text')
+                                div.col-md-6
+                                    div.form-group
+                                        div.input-group
+                                            div.input-group-addon
+                                                if (!issuedSearchTypes.isEmpty())
+                                                    span.glyphicon.glyphicon-warning-sign.color-warning
+                                                span= ' ' + _.i18n('warehouse.table.filter.search_in')
+                                            select#selectedSearchType.form-control(value=selectedSearchType, name="selectedSearchType")
+                                                each searchType in searchTypes
+                                                    - isSelected = searchType == selectedSearchType ? 'selected' : undefined
+                                                    option(value=searchType, selected=isSelected, style=issuedSearchTypes.contains(searchType) ? "color:red;" : "")
+                                                        =_.i18n('warehouse.items.table.filter.search_type.' + searchType)
+
+                            div#onWarehouseRack(style= selectedSearchType == 'ON_RACK' ? "" : "display: none;")
+                                div.row
+                                    div.col-md-4
+                                        div.form-group
+                                            label(for='warehouseRack')= _.i18n('warehouse.items.table.filter.warehouse_rack')
+                                            select#warehouseRack.form-control(name="warehouseRack")
+                                                for warehouseRack in warehouseRacks
+                                                    - isSelected = filter.selectedWarehouseRack == warehouseRack ? true : undefined;
+                                                    option(value=warehouseRack, selected=isSelected)= warehouseRack
+
+                            div.row
+                                div.col-md-6
+                                    div.form-group.controls
+                                        button.btn.btn-primary(onclick="$('#filterForm').submit();")= _.i18n('warehouse.table.list.search.btn')
+                                        a.btn.btn-default(href="/warehouse/filter_reset")= _.i18n('warehouse.table.list.cancel.btn')
+                                        a.btn.btn-success(href="/warehouse/export")= _.i18n('warehouse.table.list.export.btn')
+
+        div.row
+            div.col-xs-12
+                div.box
+                    div.box-body
+                        div.table-responsive
+                            table#warehouseList.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                                thead
+                                    tr
+                                        th= _.i18n('warehouse.table.article_number')
+                                        th= _.i18n('warehouse.table.article_name')
+                                        th= _.i18n('warehouse.table.supplier_name')
+                                        th= _.i18n('warehouse.table.warehouse_amount')
+                                        th= _.i18n('warehouse.table.supplier_amount')
+                                        th= _.i18n('warehouse.table.warehouse_rack')
+                                        th= _.i18n('warehouse.table.ebay_plus')
+                                        th= _.i18n('warehouse.table.sup_last_update')
+                                        th= _.i18n('warehouse.table.sup_last_order_date')
+                                        th= _.i18n('warehouse.table.planned_income_date')
+
+    form#importWarehouseItemsSizeForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importWarehouseItemsSizeFile(type="file", name="file", accept=".csv", onchange="uploadWarehouseItemsSizeFile();")
+    
+    form#importWarehouseItemPricesForm.hide
+        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+        input#importWarehouseItemPricesFile(type="file", name="file", accept=".csv")
+
+    div#dimensionsUploadModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('warehouse.dimension.item.upload.result')
+                div.modal-body
+
+block page_scripts
+    script(src="/js/warehouse.js", type="text/javascript")
+    script(type="text/javascript").
+        var emptyFileMessage = '#{ _.i18n("warehouse.dimension.item.upload.empty.file") }';
+        var dimensionUploadResultHeader = '#{ _.i18n("") }';
+        var dimensionTotalUpload = '#{ _.i18n("warehouse.dimension.item.total.upload")}';
+        var dimensionTotalUpdated = '#{ _.i18n("warehouse.dimension.item.total.updated") }';
+        var language = '#{_.lang()}';
+
+        $(function() {
+            $('#status').multiselect({
+                buttonWidth: "100%",
+                nonSelectedText: "-",
+                numberDisplayed: 4,
+                nSelectedText: "#{ _.i18n('multiselect.nselected') }",
+                allSelectedText: "#{ _.i18n('multiselect.all_selected') }"
+            });
+
+            var getParameter = function (theParameter) {
+                var params = window.location.search.substr(1).split('&');
+                for (var i = 0; i < params.length; i++) {
+                    var p = params[i].split('=');
+                    if (p[0] == theParameter) {
+                        return decodeURIComponent(p[1]);
+                    }
+                }
+                return false;
+            };
+
+            var start = 0;
+            try {
+                var pageParam = parseInt(getParameter('page'));
+                if (!isNaN(pageParam)) {
+                    if (pageParam) start = pageParam * 30;
+                }
+            } catch (e) {
+            }
+
+            var table = $('#warehouseList');
+
+            table.dataTable({
+                'serverSide': true,
+                'ajax': {
+                    'url': '/warehouse/list',
+                    'error': function () {
+                        $(
+                                '<div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">' +
+                                '  <i class="fa fa-ban"></i>' +
+                                '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                                '  #{_.i18n("warehouse.table.error.data")}' +
+                                '</div>'
+                        ).insertBefore($('div.table-responsive'));
+                    }
+                },
+                'dom':          '<<"row"<"col-xs-6"><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+                'lengthChange': false,
+                'scrollX':      true,
+                'displayStart': start,
+                'pageLength':   30,
+                'language': {
+                    'emptyTable':     '#{ _.i18n("datatable.emptyTable") }',
+                    'info':           '#{ _.i18n("datatable.info") }',
+                    'infoEmpty':      '#{ _.i18n("datatable.infoEmpty") }',
+                    'infoFiltered':   '#{ _.i18n("datatable.infoFiltered") }',
+                    'infoPostFix':    '#{ _.i18n("datatable.infoPostFix") }',
+                    'thousands':      '#{ _.i18n("datatable.thousands") }',
+                    'lengthMenu':     '#{ _.i18n("datatable.lengthMenu") }',
+                    'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                    'processing':     '#{ _.i18n("datatable.processing") }',
+                    'search':         '#{ _.i18n("datatable.search") }',
+                    'zeroRecords':    '#{ _.i18n("datatable.zeroRecords") }',
+                    'paginate': {
+                        'first':      '#{ _.i18n("datatable.paginate.first") }',
+                        'last':       '#{ _.i18n("datatable.paginate.last") }',
+                        'next':       '#{ _.i18n("datatable.paginate.next") }',
+                        'previous':   '#{ _.i18n("datatable.paginate.previous") }'
+                    },
+                    'aria': {
+                        'sortAscending':  '#{ _.i18n("datatable.aria.sortAscending") }',
+                        'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                    }
+                },
+                'order': [[ 0, 'desc' ]],
+                'columns': [
+                    { 'data': 'articleNumber'},
+                    { 'data': 'articleName'},
+                    { 'data': 'supplierName'},
+                    { 'data': 'warehouseAmount'},
+                    { 'data': 'supplierAmount'},
+                    { 'data': 'warehouseRack'},
+                    { 'data': 'isEbayPlus'},
+                    { 'data': 'supplierLastUpdate'},
+                    { 'data': 'supplierLastOrderDate'},
+                    { 'data': 'plannedIncomeDate'}
+                ],
+                'columnDefs': [
+                    { 'type': 'de_datetime', 'targets': 7 },
+                    { 'type': 'de_datetime', 'targets': 8 },
+                    { 'type': 'de_datetime', 'targets': 9 },
+                    { 'orderable': false, 'targets': 3}
+                ],
+                'createdRow': function (row, data) {
+                    $(row).click(function () {
+                        window.location = "/warehouse/edit?articleNumber=" + data['articleNumber'];
+                    });
+                }
+            });
+
+            table.on('page.dt', function () {
+                try {
+                    history.pushState({}, "", "/warehouse?page=" + table.DataTable().page());
+                } catch (e) {
+                }
+            });
+
+            var selectedSearchType = $('#selectedSearchType');
+            var configPane = $('#onWarehouseRack');
+            var hideOrShowFilterConfig = function () {
+                if (selectedSearchType.val() !== 'ON_RACK') {
+                    configPane.hide();
+                } else {
+                    configPane.show();
+                }
+            };
+
+            selectedSearchType.change(hideOrShowFilterConfig);
+        });

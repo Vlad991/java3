@@ -1,0 +1,147 @@
+extends ../layout_logged_in
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('invoices.index.title')
+    //- Main content
+    section.content
+
+        div.row: div.col-md-6: div.row: div.col-md-12: div.box.box-primary
+            div.box-header
+                h3.box-title= _.i18n('invoices.numbers.title')
+            div.box-body
+                div.table-responsive: table.table.table-bordered.table-hover.table-striped(role='grid')
+                    thead
+                        tr
+                            th= _.i18n('invoices.numbers.year')
+                            th= _.i18n('invoices.numbers.next_number')
+                            th
+                    tbody
+                        each invoiceNumber in invoiceNumbers
+                            tr
+                                td= invoiceNumber.year
+                                td= (invoiceNumber.currentInvoiceNumber + 1)
+                                td: a.btn.btn-xs.btn-primary(onclick="showInvoiceNumberEditDialog(#{invoiceNumber.year}); return false;")= _.i18n('invoices.numbers.edit.button')
+
+        div.row: div.col-md-6: div.row: div.col-md-12: div.box.box-primary
+            div.box-header
+                h3.box-title= _.i18n('invoices.credit_note_numbers.title')
+            div.box-body
+                div.table-responsive: table.table.table-bordered.table-hover.table-striped(role='grid')
+                    thead
+                        tr
+                            th= _.i18n('invoices.credit_note_numbers.year')
+                            th= _.i18n('invoices.credit_note_numbers.next_number')
+                            th
+                    tbody
+                        each creditNoteNumber in creditNoteNumbers
+                            tr
+                                td= creditNoteNumber.year
+                                td= (creditNoteNumber.currentCreditNoteNumber + 1)
+                                td: a.btn.btn-xs.btn-primary(onclick="showCreditNoteNumberEditDialog(#{creditNoteNumber.year}); return false;")= _.i18n('invoices.credit_note_numbers.edit.button')
+
+
+        div.row: div.col-md-6: div.row: div.col-md-12: div.box.box-primary
+            div.box-header
+                h3.box-title= _.i18n('invoices.download.title')
+            div.box-body
+                form#invoicesDownloadForm(role="form", action="/accounting/invoices/download", method="post")
+                    input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                    table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                        tr
+                            td(style="width: 20%;"): b= _.i18n('invoices.download.ordered_on.from')
+                            td
+                                div.input-group
+                                    div.input-group-addon
+                                        i.fa.fa-clock-o
+                                    input#orderCreatedFrom.form-control.datepicker(name='orderCreatedFrom', data-date-format="DD.MM.YYYY", type='text')
+                            td(style="padding-left: 25px;")
+                                button.btn.btn-primary(style="width: 100%;", onclick="$('#invoicesDownloadForm').attr('action', '/accounting/invoices/download').submit();")= _.i18n('invoices.download_invoices.button')
+                        tr
+                            td: b=_.i18n('invoices.download.ordered_on.to')
+                            td
+                                div.input-group
+                                    div.input-group-addon
+                                        i.fa.fa-clock-o
+                                    input#orderCreatedTo.form-control.datepicker(name='orderCreatedTo', data-date-format="DD.MM.YYYY", type='text')
+                            td(style="padding-left: 25px;")
+                                button.btn.btn-primary(style="width: 100%;", onclick="$('#invoicesDownloadForm').attr('action', '/accounting/invoices/download_credit_notes').submit();")= _.i18n('invoices.download_credit_notes.button')
+
+
+    div#updateModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('invoices.numbers.edit.dialog')
+                div.modal-body
+                    form#updateInvoiceNumberForm(role="form", action="/accounting/invoices/update_invoice_number", method="post")
+                        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                        div.form-group
+                            label(for='invoiceYear')= _.i18n('invoices.numbers.year')
+                            input#invoiceYear.form-control(name='invoiceYear', type='text', readonly="true")
+                        div.form-group
+                            label(for='invoiceNumber')= _.i18n('invoices.numbers.next_number')
+                            input#invoiceNumber.form-control(name='invoiceNumber', type='text')
+
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")= _.i18n('invoices.numbers.edit.cancel')
+                    button.btn.btn-primary(type="button", onclick="$('#updateInvoiceNumberForm').submit()")= _.i18n('invoices.numbers.edit.button')
+
+    div#updateCreditNoteModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('invoices.credit_note_numbers.edit.dialog')
+                div.modal-body
+                    form#updateCreditNoteNumberForm(role="form", action="/accounting/invoices/update_credit_note_number", method="post")
+                        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                        div.form-group
+                            label(for='creditNoteYear')= _.i18n('invoices.credit_note_numbers.year')
+                            input#creditNoteYear.form-control(name='creditNoteYear', type='text', readonly="true")
+                        div.form-group
+                            label(for='creditNoteNumber')= _.i18n('invoices.credit_note_numbers.next_number')
+                            input#creditNoteNumber.form-control(name='creditNoteNumber', type='text')
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")= _.i18n('invoices.credit_note_numbers.edit.cancel')
+                    button.btn.btn-primary(type="button", onclick="$('#updateCreditNoteNumberForm').submit()")= _.i18n('invoices.credit_note_numbers.edit.button')
+
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('orders.create.errors')
+                div.modal-body
+                    ul
+                        if (messages)
+                            for message in messages
+                                li= _.i18n(message)
+
+
+block page_scripts
+    script(type="text/javascript").
+
+        function showInvoiceNumberEditDialog(year) {
+            $('#invoiceYear').val(year);
+            $('#updateModal').modal('show');
+        }
+
+        function showCreditNoteNumberEditDialog(year) {
+            $('#creditNoteYear').val(year);
+            $('#updateCreditNoteModal').modal('show');
+        }
+
+        $(function () {
+
+            $('.datepicker').datetimepicker({
+                language: '#{_.lang()}',
+                format: 'DD.MM.YYYY'
+            });
+
+        });
+    if (messages)
+        script(type = "text/javascript").
+            $('#messagesModal').modal('show');

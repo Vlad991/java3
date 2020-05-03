@@ -1,0 +1,501 @@
+extends ../layout_logged_in
+
+block content_logged_id
+
+    //- Content Header (Page header)
+    section.content-header
+        h1= _.i18n('orders.edit.title')
+        div.controls
+            button.btn.btn-primary(onclick="resetDirty(); $('#orderEditForm').submit();")= _.i18n('orders.edit.save_changes')
+            a.btn.btn-default(href="/orders/edit?id=#{order.id}", onclick="resetDirty();")= _.i18n('orders.edit.discard_changes')
+            if order.canBeMarkedAsShipped()
+                a.btn.btn-success(href="/orders/edit?id=#{order.id}&shipment=true")= _.i18n('orders.edit.mark_shipped')
+            a.btn.btn-default(href="/orders/copy?id=#{order.id}")= _.i18n('orders.edit.copy')
+        if (!order.source.isManual() && order.originalTotalPriceBruttoAmount != order.totalPriceBruttoAmount)
+            div.alert.alert-warning(style="margin-left: 0; margin-bottom: 0; margin-top: 10px; padding: 10px;")
+                p: i.icon.fa.fa-warning= " " + _.i18n('orders.edit.warning.total_price_difference') + " " + order.source.value
+    //- Main content
+    section.content
+        - items = order.items;
+        - customer = order.customer;
+        - deliveryAddress = order.deliveryAddress;
+        - billingAddress = order.billingAddress;
+        form#orderEditForm(role="form", action="/orders/update", method="post")
+            input(type='hidden', name='orderId', value='#{order.id}')
+            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+            div.row
+                div.col-md-6
+                    div.box.box-primary
+                        div.box-header
+                            if (order.comments.isEmpty())
+                                h3.box-title= _.i18n('orders.edit.order_info')
+                            else
+                                h3.box-title= _.i18n('orders.edit.order_info') + " "
+                                i.icon.fa.fa-comment= " " + order.comments.size()
+                        div.box-body
+                            div.form-group.table-responsive
+                                table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                                    tr
+                                        - orderUrl = order.getUrl()
+                                        td
+                                            strong #{_.i18n('orders.edit.order_info.id')}:
+                                        if orderUrl.isPresent()
+                                            td
+                                                a(href=orderUrl.get(), target="_blank")= order.externalReference
+                                        else
+                                            td= order.externalReference
+                                    tr
+                                        td
+                                            strong #{_.i18n('orders.edit.order_info.sale_record_number')}:
+                                        td= order.saleRecordNumber
+                                    tr
+                                        td
+                                            strong #{_.i18n('orders.edit.order_info.ordered_on')}:
+                                        td= _.fmt.time(order.createdOn)
+                                    tr
+                                        td
+                                            strong #{_.i18n('orders.edit.order_info.source')}:
+                                        td= order.source.info
+                                    tr
+                                        td
+                                            strong #{_.i18n('orders.edit.order_info.assignee')}:
+                                        td
+                                            select#assignedUserId.form-control(value='#{order.assignee ? order.assignee.id : null}', name="assignedUserId")
+                                                - notAssigned = order.assignee ? undefined : 'selected'
+                                                option(value='-1', selected=notAssigned) -
+                                                each user in users
+                                                    - isAssigned = user.id == order.assignee.id ? 'selected' : undefined
+                                                    option(value=user.id, selected=isAssigned)= user.name
+                            div.form-group
+                                label(for='orderStatus')= _.i18n('orders.edit.order_info.status')
+                                select#orderStatus.form-control(value='#{order.status.name()}', name="orderStatus")
+                                    for status in order.status.values()
+                                        - isSelected = order.status.name() == status.name() ? true : undefined;
+                                        option(value=status.name(), selected=isSelected)= _.i18n('orders.edit.order_info.status.' + status.name())
+                            div.form-group
+                                label(for='paymentDetails')= _.i18n('orders.edit.order_info.payment_details')
+                                input#paymentDetails.form-control(value='#{order.paymentDetails}', name="paymentDetails")
+                            div.row
+                                div.col-md-6
+                                    div.form-group
+                                        label(for='paidOn')= _.i18n('orders.edit.order_info.paid_on')
+                                        div.input-group
+                                            div.input-group-addon
+                                                i.fa.fa-clock-o
+                                            input#paidOn.form-control.datepicker(value='#{ _.fmt.time(order.paidOn) }', name="paidOn", data-date-format="DD.MM.YYYY HH:mm", type='text')
+                                div.col-md-6
+                                    div.form-group
+                                        label(for='shippedOn')= _.i18n('orders.edit.order_info.shipped_on')
+                                        div.input-group
+                                            div.input-group-addon
+                                                i.fa.fa-clock-o
+                                            input#shippedOn.form-control.datepicker(value='#{ _.fmt.time(order.shippedOn) }', name="shippedOn", data-date-format="DD.MM.YYYY HH:mm", type='text')
+                            div.form-group
+                                label(for='deliveryService')= _.i18n('orders.edit.order_info.delivery_service')
+                                input#deliveryService.form-control(value='#{order.deliveryService}', name="deliveryService")
+                            div.form-group
+                                label(for='deliveryTrackingNumber')= _.i18n('orders.edit.order_info.delivery_tracking_number')
+                                input#deliveryTrackingNumber.form-control(value='#{order.deliveryTrackingNumber}', name="deliveryTrackingNumber")
+                            div.form-group.table-responsive
+                                table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                                    tr(class=(order.creditNote != null && order.creditNote.includeDeliveryPrice ? 'credit-note-include' : ''))
+                                        td: b= _.i18n('orders.edit.order_info.delivery_price_amount_netto')
+                                        td= _.fmt.moneyWithCurrency(order.deliveryPriceNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.delivery_price_amount_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.deliveryPriceBruttoAmount, order.currency)
+                                    tr(class=(order.creditNote != null && order.creditNote.includePaymentProcessingFee ? 'credit-note-include' : ''))
+                                        td: b= _.i18n('orders.edit.order_info.payment_processing_fee_netto')
+                                        td= _.fmt.moneyWithCurrency(order.paymentProcessingFeeNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.payment_processing_fee_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.paymentProcessingFeeBruttoAmount, order.currency)
+                                    tr
+                                        td: b= _.i18n('orders.edit.order_info.delivery_vat_percentage')
+                                        td= _.fmt.number(order.deliveryPriceVatPercentage)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.payment_processing_fee_vat_percentage')
+                                        td= _.fmt.number(order.paymentProcessingFeeVatPercentage)
+                                    tr(class=(order.creditNote != null && order.creditNote.includeDiscount ? 'credit-note-include' : ''))
+                                        td.not-in-credit-note: b= _.i18n('orders.edit.order_info.vat_percentage')
+                                        td.not-in-credit-note= _.fmt.number(order.vatPercentage)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.discount_amount')
+                                        td= _.fmt.moneyWithCurrency(order.discountAmount, order.currency)
+                                    tr(class=(order.effectiveTotalPriceNettoAmount != order.totalPriceNettoAmount || order.effectiveTotalPriceBruttoAmount != order.totalPriceBruttoAmount ? 'credit-note-include' : ''))
+                                        td: b= _.i18n('orders.edit.order_info.total_netto')
+                                        td= _.fmt.moneyWithCurrency(order.totalPriceNettoAmount, order.currency)
+                                        td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.total_brutto')
+                                        td= _.fmt.moneyWithCurrency(order.totalPriceBruttoAmount, order.currency)
+                                    if (order.effectiveTotalPriceNettoAmount != order.totalPriceNettoAmount || order.effectiveTotalPriceBruttoAmount != order.totalPriceBruttoAmount)
+                                        tr
+                                            td: b= _.i18n('orders.edit.order_info.total_netto')
+                                            td= _.fmt.moneyWithCurrency(order.effectiveTotalPriceNettoAmount, order.currency)
+                                            td(style="padding-left: 20px;"): b= _.i18n('orders.edit.order_info.total_brutto')
+                                            td= _.fmt.moneyWithCurrency(order.effectiveTotalPriceBruttoAmount, order.currency)
+
+
+                div.col-md-6
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.customer_info')
+                        div.box-body
+                            div.form-group
+                                label(for='customerName')= _.i18n('orders.edit.customer_info.name')
+                                input#customerName.form-control(value='#{customer.name}', name="customerName")
+                            div.form-group
+                                label(for='customerAlias')= _.i18n('orders.edit.customer_info.alias')
+                                input#customerAlias.form-control(value='#{customer.alias}', name="customerAlias")
+                            div#customerEmailEdit.form-group.hide
+                                label(for='customerEmail')= _.i18n('orders.edit.customer_info.email')
+                                input#customerEmail.form-control(value='#{customer.email}', name="customerEmail")
+                            div#customerEmailView.form-group
+                                label(for='customerEmail')= _.i18n('orders.edit.customer_info.email')
+                                div
+                                    a#customerEmailLink(target='_top', href='mailto:' + customer.email)= customer.email
+                                    button.btn.btn-sm.pull-right(onclick="enableEmailEdit(); return false;")
+                                        i.fa.fa-edit
+                            div.form-group
+                                label(for='customerPhone')= _.i18n('orders.edit.customer_info.phone_number')
+                                input#customerPhone.form-control(value='#{customer.phoneNumber}', name="customerPhone")
+                            div.form-group
+                                label(for='customerVatNumber')= _.i18n('orders.edit.customer_info.vat_number')
+                                input#customerVatNumber.form-control(value=customer.vatNumber, name="customerVatNumber")
+                            div.form-group
+                                label(for='customerComment')= _.i18n('orders.edit.customer_info.comment')
+                                textarea#customerComment.form-control(name="customerComment", rows=5)=order.customerComment
+
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.invoice_info')
+                        div.box-body
+                            if _.isBlank(order.invoiceNumber)
+                                div.form-group
+                                    a.btn.btn-sm.btn-primary(href="/orders/generate_invoice?id=#{order.id}")= _.i18n('orders.edit.invoice_info.generate_invoice')
+                            else
+                                div.form-group.table-responsive
+                                    table(style='width: 100%; border-collapse:separate; border-spacing:0 5px;')
+                                        tr
+                                            td
+                                                strong #{_.i18n('orders.edit.invoice_info.invoice_number')}:
+                                            td
+                                                div.invoice-number
+                                                    if order.invoiceFile == null
+                                                        = order.invoiceNumber
+                                                    else
+                                                        a(href="/orders/show_invoice?id=#{order.id}", target="_blank")= order.invoiceNumber
+                                                        a.btn.btn-default.btn-sm(href="/orders/download_invoice?id=#{order.id}", style="margin-left: 10px;")
+                                                            span.glyphicon.glyphicon-download-alt(aria-hidden="true"): span(style="margin-left: 5px;")= _.i18n('orders.edit.invoice_info.download_invoice')
+                                                    button.btn.btn-sm.pull-right(onclick="enableInvoiceNumberEdit(); return false;")
+                                                        i.fa.fa-edit
+                                                div.invoice-number-edit.hide
+                                                    input#newInvoiceNumber.form-control(value='#{order.invoiceNumber}', name="newInvoiceNumber")
+
+                                        tr
+                                            td
+                                                strong #{_.i18n('orders.edit.invoice_info.invoiced_on')}:
+                                            td
+                                                div.invoiced-on
+                                                    = _.fmt.time(order.invoicedOn)
+                                                    button.btn.btn-sm.pull-right(onclick="enableInvoicedOnEdit(); return false;")
+                                                        i.fa.fa-edit
+                                                div.invoiced-on-edit.hide
+                                                    input#newInvoicedOn.form-control.datepicker(value='#{ _.fmt.date(order.invoicedOn) }', name="newInvoicedOn", data-date-format="DD.MM.YYYY", type='text')
+
+                                        if !_.isBlank(order.creditNoteNumber)
+                                            tr
+                                                td
+                                                    strong #{_.i18n('orders.edit.invoice_info.credit_note_number')}:
+                                                td
+                                                    div.credit-note-number
+                                                        if order.creditNoteFile == null
+                                                            = order.creditNoteNumber
+                                                        else
+                                                            a(href="/orders/show_credit_note?id=#{order.id}", target="_blank")= order.creditNoteNumber
+                                                            a.btn.btn-default.btn-sm(href="/orders/download_credit_note?id=#{order.id}", style="margin-left: 10px;")
+                                                                span.glyphicon.glyphicon-download-alt(aria-hidden="true"): span(style="margin-left: 5px;")= _.i18n('orders.edit.invoice_info.download_credit_note')
+                                                        button.btn.btn-sm.pull-right(onclick="enableCreditNoteNumberEdit(); return false;")
+                                                            i.fa.fa-edit
+                                                    div.credit-note-number-edit.hide
+                                                        input#newCreditNoteNumber.form-control(value='#{order.creditNoteNumber}', name="newCreditNoteNumber")
+
+                                            tr
+                                                td
+                                                    strong #{_.i18n('orders.edit.invoice_info.credit_note_issued_on')}:
+                                                td
+                                                    div.credit-note-issued-on
+                                                        = _.fmt.time(order.creditNoteIssuedOn)
+                                                        button.btn.btn-sm.pull-right(onclick="enableCreditNoteIssuedOnEdit(); return false;")
+                                                            i.fa.fa-edit
+                                                    div.credit-note-issued-on-edit.hide
+                                                        input#newCreditNoteIssuedOn.form-control.datepicker(value='#{_.fmt.date(order.creditNoteIssuedOn)}', name="newCreditNoteIssuedOn", data-date-format="DD.MM.YYYY", type='text')
+
+
+                                div.form-group
+                                    a.btn.btn-sm.btn-default(href="/orders/generate_invoice?id=#{order.id}")= _.i18n('orders.edit.invoice_info.regenerate_invoice')
+                                    if _.isBlank(order.creditNoteNumber)
+                                        a.btn.btn-sm.btn-danger(href="/orders/generate_credit_note?id=#{order.id}", style="margin-left: 10px;")= _.i18n('orders.edit.invoice_info.generate_credit_note')
+                                    else
+                                        a.btn.btn-sm.btn-default(href="/orders/generate_credit_note?id=#{order.id}", style="margin-left: 10px;")= _.i18n('orders.edit.invoice_info.regenerate_credit_note')
+
+            div.row
+                div.col-md-12
+                    - comments = order.getSortedComments();
+                    include ../components/comments
+                    +comments(comments, 'order')
+
+            div.row
+                div.col-md-12
+                    div.box.box-primary
+                        div.box-header
+                            h3.box-title= _.i18n('orders.edit.items')
+                        div.box-body
+                            div.table-responsive(style="overflow: auto;")
+                                table#itemsTable.table.table-bordered.table-striped(role='grid')
+                                    thead
+                                        tr
+                                            th= _.i18n('items.table.name')
+                                            th= _.i18n('items.table.sale_record_number')
+                                            th= _.i18n('items.table.article_number')
+                                                span.text-red *
+                                            th= _.i18n('items.table.amount')
+                                            th= _.i18n('items.table.price_netto')
+                                            th= _.i18n('items.table.price_brutto')
+                                            th= _.i18n('items.table.discount_percentage')
+                                            th= _.i18n('items.table.external_id')
+                                            th= _.i18n('items.table.reference_oe')
+                                            th= _.i18n('items.table.reference_oem')
+                                            th= _.i18n('items.table.reference_other')
+                                            th= _.i18n('items.table.ordered_from')
+                                            th= _.i18n('items.table.eta')
+                                            th= _.i18n('items.table.processing_days')
+                                            th= _.i18n('items.table.max_processing_date')
+                                    tbody
+                                        each item, i in items
+                                            tr(class=(order.creditNote != null && order.creditNote.isItemIncluded(item) ? 'credit-note-include' : item.state.isWarning() ? 'order-item-state-warning' : ''))
+                                                td= item.name
+                                                td= item.saleRecordNumber
+                                                td
+                                                    div.form-group.input-group(style="width: 170px;")
+                                                        input.form-control(type='hidden', name='items['+ i +'].itemId', value= item.id)
+                                                        input.form-control(name='items['+ i +'].itemArticleNumber', value= item.articleNumber)
+                                                        div.input-group-addon
+                                                            a(onclick="WarehouseItemsSuggestionModal.show('warehouse_items_suggestion_modal', 'warehouseItemsSuggestionModalCallback', " + i + ", '" + item.articleNumber + "'); return false;"): span.fa.fa-search
+                                                    div.form-group
+                                                        - itemTransitions = transitions.get(item.state.state);
+                                                        label=_.i18n('items.table.state')
+                                                        select.state-selector.form-control(style='width: 170px;', name='items[' + i + '].state')
+                                                            each transition in itemTransitions
+                                                                option(value=transition, selected=transition == item.state.state)= _.i18n('items.table.state.' + transition)
+                                                    div.form-group.input-group(style="width: 170px;")
+                                                        input.form-control(name='items[' + i + '].warehouseRack', value= item.state.warehouseRack, disabled=transition == manualState)
+                                                        div.input-group-addon
+                                                            a(href="/warehouse/edit?articleNumber=" + item.articleNumber): span.fa.fa-angle-double-right
+                                                td= item.amount
+                                                td= _.fmt.moneyWithCurrency(item.priceNettoAmount, order.currency)
+                                                td= _.fmt.moneyWithCurrency(item.priceBruttoAmount, order.currency)
+                                                td= _.fmt.number(item.discountPercentage)
+                                                td= item.externalReference
+                                                td= item.referenceNumberOE
+                                                td= item.referenceNumberOEM
+                                                td= item.referenceNumberOther
+                                                td
+                                                    div.input-group(style="width: 120px;")
+                                                        input.form-control(name='items['+ i +'].itemOrderedFrom', value= item.state.orderedFrom)
+                                                        div.input-group-addon
+                                                            a(href="#", onclick="setFromForAll(this); return false;"): span.fa.fa-angle-double-right
+                                                td
+                                                    div.input-group
+                                                        div.input-group-addon
+                                                            i.fa.fa-clock-o
+                                                        input.form-control.datepicker(name='items['+ i +'].itemEta', value= _.fmt.date(item.state.eta), data-date-format="DD.MM.YYYY HH:mm", type='text', style="min-width: 130px;")
+                                                        div.input-group-addon
+                                                            a#ttt(href="#", onclick="setEtaForAll(this); return false;"): span.fa.fa-angle-double-right
+                                                td
+                                                    div.input-group(style="width: 100px;")
+                                                        input.form-control(name='items[' + i + '].processingDays', value= item.state.processingDays)
+                                                        div.input-group-addon
+                                                            a(href="#", onclick="setProcDaysForAll(this); return false;"): span.fa.fa-angle-double-right
+                                                td
+                                                    div.input-group
+                                                        div.input-group-addon
+                                                            i.fa.fa-clock-o
+                                                        input.form-control.datepicker(value= _.fmt.date(item.state.maxDispatchDate), data-date-format="DD.MM.YYYY", type='text', style="min-width: 100px;", disabled)
+
+            div.row
+                include ../components/address_form
+                - deliveryText = _.i18n('orders.edit.delivery_address')
+                - billingText  = _.i18n('orders.edit.billing_address')
+                div.col-md-6
+                    +address_form(deliveryText, deliveryAddress, 'delivery')
+                div.col-md-6
+                    +address_form(billingText, billingAddress, 'billing')
+
+            div.row
+                div.col-md-12
+                    a.btn.btn-default(href="/orders/advanced_edit?id=#{order.id}")= _.i18n('orders.edit.advanced_edit')
+
+    div#markShippedModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('orders.edit.mark_shipped.title')
+                div.modal-body
+
+                    if order.shippedOn != null
+                        div.alert.alert-warning.alert-dismissable
+                                i.fa.fa-warning
+                                button.close(type="button", data-dismiss="alert", aria-hidden="true") &times;
+                                div= _.i18n('orders.edit.mark_shipped.warning')
+
+                    form#orderShippedForm(role="form", action="/orders/mark_shipped", method="post")
+                        input(type='hidden', name='orderId', value='#{order.id}')
+                        input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                        div.form-group
+                            label(for='shippedOn')= _.i18n('orders.edit.order_info.shipped_on')
+                            div.input-group
+                                div.input-group-addon
+                                    i.fa.fa-clock-o
+                                input#shippedOn.form-control.ignore-change.datepicker(value='#{ _.fmt.time(order.shippedOn) }', name="shippedOn", data-date-format="DD.MM.YYYY HH:mm", type='text')
+                        div.form-group
+                            label(for='deliveryService')= _.i18n('orders.edit.order_info.delivery_service')
+                            input#deliveryService.form-control.ignore-change(value='#{order.deliveryService}', name="deliveryService")
+                        div.form-group
+                            label(for='deliveryTrackingNumber')= _.i18n('orders.edit.order_info.delivery_tracking_number')
+                            input#deliveryTrackingNumber.form-control.ignore-change(value='#{order.deliveryTrackingNumber}', name="deliveryTrackingNumber")
+
+                div.modal-footer
+                    button.btn.btn-default(type="button", data-dismiss="modal")= _.i18n('orders.edit.mark_shipped.cancel')
+                    button.btn.btn-primary(type="button", onclick="$('#orderShippedForm').submit()")= _.i18n('orders.edit.mark_shipped.confirm')
+
+    div#messagesModal.modal.fade(tabindex="-1", role="dialog", aria-hidden="true")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button", data-dismiss="modal", aria-hidden="true") &times;
+                    h3= _.i18n('error')
+                div.modal-body
+                    ul
+                        if (messages)
+                            for message in messages
+                                li= _.i18n(message)
+
+    include ../components/warehouse/warehouse_items_suggestion_modal
+    +warehouse_items_suggestion_modal('warehouse_items_suggestion_modal')
+
+block page_scripts
+    include ../components/warehouse/warehouse_items_suggestion_modal_scripts
+    script(type='text/javascript').
+
+        var isDirty = false;
+
+        $(function () {
+
+            $('.state-selector').each(function(){
+                $(this).change(function (item) {
+                    if ($(this).val() == 'MANUAL') {
+                        $(this).closest('tr').find('.warehouse-rack').prop('disabled', false);
+                    } else {
+                        $(this).closest('tr').find('.warehouse-rack').prop('disabled', true);
+                    }
+                })
+            });
+
+            $('.form-control').change(function () {
+
+                if ($(this).hasClass('ignore-change')) return;
+
+                $(this).addClass('changed');
+                isDirty = true;
+
+            });
+
+            $('.datepicker').datetimepicker({
+                language: '#{_.lang()}'
+            });
+
+            $(window).bind('beforeunload', function (e) {
+                if (isDirty) {
+                    return "#{_.i18n('orders.edit.warning.unsaved')}";
+                } else {
+                    return undefined;
+                }
+            });
+
+            window.resetDirty = function () {
+                isDirty = false;
+            };
+
+            if (window.location.href.indexOf('&shipment=true') === window.location.href.length - 14) {
+                $('#markShippedModal').modal('show');
+            }
+
+        });
+
+        function enableEmailEdit() {
+            $('#customerEmailView').addClass('hide');
+            $('#customerEmailEdit').removeClass('hide');
+        }
+
+        function enableInvoiceNumberEdit() {
+            $('div.invoice-number').addClass('hide');
+            $('div.invoice-number-edit').removeClass('hide');
+        }
+
+        function enableInvoicedOnEdit() {
+            $('div.invoiced-on').addClass('hide');
+            $('div.invoiced-on-edit').removeClass('hide');
+        }
+
+        function enableCreditNoteNumberEdit() {
+            $('div.credit-note-number').addClass('hide');
+            $('div.credit-note-number-edit').removeClass('hide');
+        }
+
+        function enableCreditNoteIssuedOnEdit() {
+            $('div.credit-note-issued-on').addClass('hide');
+            $('div.credit-note-issued-on-edit').removeClass('hide');
+        }
+
+        function setFromForAll(e) {
+            setForAll('input.form-control[name$="\\]\\.itemOrderedFrom"]', e);
+        }
+
+        function setProcDaysForAll(e) {
+            setForAll('input.form-control[name$="\\]\\.processingDays"]', e);
+        }
+
+        function setEtaForAll(e) {
+            setForAll('input.form-control[name$="\\]\\.itemEta"]', e);
+        }
+
+        function setForAll(selector, elem) {
+
+            var value;
+            try {
+                value = $(elem).parents('div.input-group').children('input.form-control').first().val();
+            } catch (e) {
+                value = "";
+            }
+
+            var r = confirm("#{_.i18n('orders.edit.confirm.set_for_all')} " + value);
+            if (r == true) {
+                $(selector).each(function () {
+                    $(this).val(value).addClass('changed');
+                    isDirty = true;
+                });
+            }
+
+        }
+
+        function warehouseItemsSuggestionModalCallback(data, modalId, rowId) {
+            var td = $('#itemsTable').find('tbody tr').eq(rowId).find('td').eq(2);
+            td.find('input:not(:hidden)').val(data.articleNumber);
+            td.find('select').val('INITIAL');
+            td.find('input.warehouse-rack').val(data.warehouseRack);
+            $('#' + modalId).modal('toggle');
+        }
+
+    if (messages)
+        script(type="text/javascript").
+            $('#messagesModal').modal('show');
+
+    - tableData = { 'id': 'itemsTable', 'dontSort': true }
+    //include ../components/table_scripts

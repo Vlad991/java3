@@ -1,0 +1,32 @@
+mixin address_form(label, address, prefix)
+    div.box.box-primary
+        div.box-header
+            h3.box-title= label
+        div.box-body
+            div.form-group
+                label(for='#{prefix + "Name"}')= _.i18n('address.form.name')
+                input.form-control(id='#{prefix + "Name"}', value='#{address.name}', name='#{prefix + "Name"}')
+            div.form-group
+                label(for='#{prefix + "Company"}')= _.i18n('address.form.company')
+                input.form-control(id='#{prefix + "Company"}', value='#{address.company}', name='#{prefix + "Company"}')
+            div.form-group
+                label(for='#{prefix + "Phone"}')= _.i18n('address.form.phone_number')
+                input.form-control(id='#{prefix + "Phone"}', value='#{address.phoneNumber}', name='#{prefix + "Phone"}')
+            div.form-group
+                label(for='#{prefix + "Street1"}')= _.i18n('address.form.street1')
+                input.form-control(id='#{prefix + "Street1"}', value='#{address.street1}', name='#{prefix + "Street1"}')
+            div.form-group
+                label(for='#{prefix + "Street2"}')= _.i18n('address.form.street2')
+                input.form-control(id='#{prefix + "Street2"}', value='#{address.street2}', name='#{prefix + "Street2"}')
+            div.row
+                div.col-lg-3
+                    div.form-group
+                        label(for='#{prefix + "PostalCode"}')= _.i18n('address.form.postal_code')
+                        input.form-control(id='#{prefix + "PostalCode"}', value='#{address.postalCode}', name='#{prefix + "PostalCode"}')
+                div.col-lg-9
+                    div.form-group
+                        label(for='#{prefix + "City"}')= _.i18n('address.form.city')
+                        input.form-control(id='#{prefix + "City"}', value='#{address.city}', name='#{prefix + "City"}')
+            div.form-group
+                label(for='#{prefix + "Country"}')= _.i18n('address.form.country')
+                input.form-control(id='#{prefix + "Country"}', value='#{address.country}', name='#{prefix + "Country"}'))

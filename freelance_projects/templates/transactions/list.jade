@@ -1,0 +1,153 @@
+extends ../layout_logged_in
+
+block content_logged_id
+    //- Content Header (Page header)
+    section.content-header
+        h1 #{_.i18n('transactions.all.title')}
+
+    //- Main content
+    section.content
+        div.row
+            div.col-xs-12
+                form#filterForm.form-horizontal(role="form", action="/transactions/filter", method="post")
+                    div.box.box-primary
+                        div.box-body
+                            input(type="hidden", name="#{_.attr('_csrf').parameterName}", value="#{_.attr('_csrf').token}")
+                            div.row: div.col-md-12
+                                div.col-md-6
+                                    div.form-group
+                                        input#searchToken.form-control(name='searchToken', value=searchToken, placeholder=_.i18n('transactions.table.filter.search'), type='text')
+                                div.col-md-3
+                                    div.form-group
+                                        label.col-sm-4.control-label(for='dateFrom')= _.i18n('transactions.table.filter.date.from')
+                                        div.col-sm-8.input-group
+                                            div.input-group-addon
+                                                i.fa.fa-clock-o
+                                            input#dateFrom.form-control.datepicker(name='filterConfig.dateFrom', value=_.fmt.date(filter.dateFrom), data-date-format="DD.MM.YYYY", type='text')
+                                div.col-md-3
+                                    div.form-group
+                                        label.col-sm-4.control-label(for='paidTo')= _.i18n('transactions.table.filter.date.to')
+                                        div.col-sm-8.input-group
+                                            div.input-group-addon
+                                                i.fa.fa-clock-o
+                                            input#dateTo.form-control.datepicker(name='filterConfig.paidTo', value=_.fmt.date(filter.dateTo), data-date-format="DD.MM.YYYY", type='text')
+                            div.row
+                                div.col-md-12
+                                    button.btn.btn-primary(onclick="$('#filterForm').submit();")= _.i18n('transactions.table.filter.apply')
+                                    a.btn.btn-default(href="/transactions/reset_filter")= _.i18n('transactions.table.filter.reset')
+
+        div.row
+            div.col-xs-12
+                div.box
+                    div.box-body
+                        div.table-responsive
+                            table#transactionsList.table.table-bordered.table-hover.table-striped.selectable(role='grid')
+                                thead
+                                    tr
+                                        th= _.i18n('transactions.table.date')
+                                        th= _.i18n('transactions.table.source')
+                                        th= _.i18n('transactions.table.amount')
+                                        th= _.i18n('transactions.table.currency')
+                                        th= _.i18n('transactions.table.name')
+                                        th= _.i18n('transactions.table.description')
+                                        th= _.i18n('transactions.table.notes')
+
+block page_scripts
+    script(type="text/javascript").
+        $(function() {
+
+            $('.datepicker').datetimepicker({
+                language: '#{_.lang()}',
+                format:   'DD.MM.YYYY'
+            });
+
+            var getParameter = function (theParameter) {
+                var params = window.location.search.substr(1).split('&');
+                for (var i = 0; i < params.length; i++) {
+                    var p = params[i].split('=');
+                    if (p[0] == theParameter) {
+                        return decodeURIComponent(p[1]);
+                    }
+                }
+                return false;
+            };
+
+            var start = 0;
+            try {
+                var pageParam = parseInt(getParameter('page'));
+                if (!isNaN(pageParam)) {
+                    if (pageParam) start = pageParam * 30;
+                }
+            } catch (e) {
+            }
+
+            var table = $('#transactionsList');
+
+            table.dataTable({
+                'serverSide': true,
+                'ajax': {
+                    'url': '/transactions/list',
+                    'error': function () {
+                        $(
+                            '<div class="alert alert-danger alert-dismissable" style="margin-top: 20px;">' +
+                            '  <i class="fa fa-ban"></i>' +
+                            '  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>' +
+                            '  #{_.i18n("transactions.table.error.data")}' +
+                            '</div>'
+                        ).insertBefore($('div.table-responsive'));
+                    }
+                },
+                'dom':          '<<"row"<"col-xs-6"><"col-xs-6"p>><"row"<"col-xs-12"t>><"row"<"col-xs-6"i><"col-xs-6"p>>>',
+                'lengthChange': false,
+                'scrollX':      true,
+                'displayStart': start,
+                'pageLength':   30,
+                'language': {
+                    'emptyTable':     '#{ _.i18n("datatable.emptyTable") }',
+                    'info':           '#{ _.i18n("datatable.info") }',
+                    'infoEmpty':      '#{ _.i18n("datatable.infoEmpty") }',
+                    'infoFiltered':   '#{ _.i18n("datatable.infoFiltered") }',
+                    'infoPostFix':    '#{ _.i18n("datatable.infoPostFix") }',
+                    'thousands':      '#{ _.i18n("datatable.thousands") }',
+                    'lengthMenu':     '#{ _.i18n("datatable.lengthMenu") }',
+                    'loadingRecords': '#{ _.i18n("datatable.loadingRecords") }',
+                    'processing':     '#{ _.i18n("datatable.processing") }',
+                    'search':         '#{ _.i18n("datatable.search") }',
+                    'zeroRecords':    '#{ _.i18n("datatable.zeroRecords") }',
+                    'paginate': {
+                        'first':      '#{ _.i18n("datatable.paginate.first") }',
+                        'last':       '#{ _.i18n("datatable.paginate.last") }',
+                        'next':       '#{ _.i18n("datatable.paginate.next") }',
+                        'previous':   '#{ _.i18n("datatable.paginate.previous") }'
+                    },
+                    'aria': {
+                        'sortAscending':  '#{ _.i18n("datatable.aria.sortAscending") }',
+                        'sortDescending': '#{ _.i18n("datatable.aria.sortDescending") }'
+                    }
+                },
+                'order': [[ 0, 'desc' ]],
+                'columns': [
+                    { 'data': 'date'},
+                    { 'data': 'source'},
+                    { 'data': 'amount'},
+                    { 'data': 'currency'},
+                    { 'data': 'name'},
+                    { 'data': 'description'},
+                    { 'data': 'notes'}
+                ],
+                'columnDefs': [
+                    { 'type': 'de_datetime', 'targets': 0 }
+                ],
+                'createdRow': function(row, data) {
+                    // TODO
+                }
+            });
+
+            table.on('page.dt', function () {
+                try {
+                    history.pushState({}, "", "/transactions?page=" + table.DataTable().page());
+                } catch (e) {
+                }
+            });
+
+        });
